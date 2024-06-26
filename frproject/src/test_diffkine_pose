@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+
+import rospy
+from sensor_msgs.msg import JointState
+
+from markers import *
+from lab5functions import *
+
+if __name__ == '__main__':
+    
+    # Initialize the node
+    rospy.init_node("testKineControlPose")
+    print('starting motion ... ')
+    # Publisher: publish to the joint_states topic
+    pub = rospy.Publisher('joint_states', JointState, queue_size=1000)
+    # Markers for the current and desired positions
+    bmarker_current  = FrameMarker()
+    bmarker_desired = FrameMarker(0.5)
+
+    # Joint names
+    jnames = ['base__link01', 'link01__link02', 'link02__link03', 'link03__link04', 'link04__link05', 'link05__gripper']
+
+    # Desired pose
+    ang = pi/3
+    Rd = np.array([[0,1,0],[1,0,0],[0,0,-1]])
+    qd = rot2quat(Rd)
+    # Find an xd that the robot can reach
+    xd = np.array([0.8, 0.0, 0.9, qd[0], qd[1], qd[2], qd[3]])
+    #xd  = np.array([0.5, 0.5, 0.6, np.cos(ang/2.0), 0, 0, np.sin(ang/2.0)])
+    # Initial configuration
+    q0  = np.array([0.0, -0.42, -0.32, 0, -1.65, 0])
+
+    # Resulting initial pose (end effector with respect to the base link)
+    T = fkine_kr20(q0)
+    x0 = TF2xyzquat(T)
+
+    # Markers for the current and the desired pose
+    bmarker_current.setPose(x0)
+    bmarker_desired.setPose(xd)
+
+    # Instance of the JointState message
+    jstate = JointState()
+    # Values of the message
+    jstate.header.stamp = rospy.Time.now()
+    jstate.name = jnames
+    # Add the head joint value (with value 0) to the joints
+    jstate.position = q0
+
+    # Frequency (in Hz) and control period 
+    freq = 200
+    dt = 1.0/freq
+    rate = rospy.Rate(freq)
+
+    # Initial joint configuration
+    q = copy(q0)
+    x = copy(x0)
+    quat = x[3:7]
+    # Initialize the derror vector (derivative of the error)
+    e = np.zeros(7)
+    edot = np.zeros(7)
+    # Main loop
+    #for i in range(1):
+    while not rospy.is_shutdown():
+        # Current time (needed for ROS)
+        jstate.header.stamp = rospy.Time.now()
+        
+        
+        # -----------------------------
+        # Kinematic control law for the pose (complete here)
+         #error = (x-xd)
+        print(q)
+        T = fkine_kr20(q)
+   
+        e = np.subtract(TF2xyzquat(T), xd)
+        #print(np.size(TF2xyzquat(T)))
+        #print(np.size(xd))
+        #print(TF2xyzquat(T))
+        #print(xd)
+        k = 0.1
+        edot = np.dot(-k, e)
+        #edot = edot.reshape(1, -1)
+	
+        k_amort = 0.01
+        k_amort = k_amort*k_amort
+	#Pseudoinversa de J
+        J = jacobian_pose(q)
+        if (is_singular(J)):
+            print("SINGULARIDAD")
+            Jpseudo = np.dot(J.T, np.linalg.inv(np.dot(J, J.T)+np.dot(k_amort, np.identity(7))))
+        else:
+            Jpseudo = np.linalg.pinv(J)
+            
+	#np.dot(np.linalg(np.dot(J.T, J)),J.T)
+	
+	#skew?
+	
+        qdot = np.dot(Jpseudo, edot.T)
+        q = (q + np.dot(dt, qdot))[0]
+        print(np.dot(dt, qdot))
+        # -----------------------------
+
+        # Current configuration trnaformation to current position
+        T = fkine_kr20(q)
+        x = TF2xyzquat(T)
+        # Publish the message
+        jstate.position = q
+        pub.publish(jstate)
+        bmarker_desired.setPose(xd)
+        bmarker_current.setPose(x)
+        # Wait for the next iteration
+        rate.sleep()

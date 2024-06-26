@@ -1,0 +1,150 @@
+#!/usr/bin/env python3
+
+import rospy
+import matplotlib.pyplot as plt
+from sensor_msgs.msg import JointState
+
+from markers import *
+from lab5functions import *
+import time
+
+if __name__ == '__main__':
+
+    # Initialize the node
+    rospy.init_node("testKineControlPosition")
+    print('starting motion ... ')
+    # Publisher: publish to the joint_states topic
+    pub = rospy.Publisher('joint_states', JointState, queue_size=10)
+    # Files for the logs
+    fxcurrent = open("/tmp/xcurrent.txt", "w")                
+    fxdesired = open("/tmp/xdesired.txt", "w")
+    fq = open("/tmp/q.txt", "w")
+
+    # Markers for the current and desired positions
+    bmarker_current  = BallMarker(color['RED'])
+    bmarker_desired = BallMarker(color['GREEN'])
+
+    # Joint names
+    jnames = ['base__link01', 'link01__link02', 'link02__link03', 'link03__link04', 'link04__link05', 'link05__gripper']
+
+    # Desired position
+    xd = np.array([0.8, 0.0, 0.8])
+    # Initial configuration
+    q0 = np.array([0.0, -0.42, -0.32, 0, -1.65, 0])
+
+    # Resulting initial position (end effector with respect to the base link)
+    T = fkine_kr20(q0)
+    x0 = T[0:3,3]
+
+    # Red marker shows the achieved position
+    bmarker_current.xyz(x0)
+    # Green marker shows the desired position
+    bmarker_desired.xyz(xd)
+
+    # Instance of the JointState message
+    jstate = JointState()
+    # Values of the message
+    jstate.header.stamp = rospy.Time.now()
+    jstate.name = jnames
+    # Add the head joint value (with value 0) to the joints
+    jstate.position = q0
+
+    # Frequency (in Hz) and control period 
+    freq = 200
+    dt = 1.0/freq
+    rate = rospy.Rate(freq)
+
+    # Initial joint configuration
+    q = copy(q0)
+    # Main loop
+    while not rospy.is_shutdown():
+        # Current time (needed for ROS)
+        jstate.header.stamp = rospy.Time.now()
+        # Kinematic control law for position (complete here)
+        # -----------------------------
+        #error = (x-xd)
+        x = fkine_kr20(q)[0:3,3]
+        
+        e = np.subtract(x.T,xd)
+        k = 0.5
+        edot = np.dot(-k, e)
+        #edot = edot.reshape(1, -1)
+	
+	#Pseudoinversa de J
+        J = jacobian_position(q)
+        Jpseudo = np.linalg.pinv(J)
+        #np.dot(np.linalg(np.dot(J.T, J)),J.T)
+	
+        qdot = np.dot(Jpseudo, edot)
+        q = q + np.dot(dt, qdot)
+        
+        # -----------------------------
+
+        
+        # Log values                                                      
+        fxcurrent.write(str(x[0])+' '+str(x[1]) +' '+str(x[2])+'\n')
+        fxdesired.write(str(xd[0])+' '+str(xd[1])+' '+str(xd[2])+'\n')
+        fq.write(str(q[0])+" "+str(q[1])+" "+str(q[2])+" "+str(q[3])+" "+
+                 str(q[4])+" "+str(q[5])+"\n")
+        
+        # Publish the message
+        jstate.position = q
+        pub.publish(jstate)
+        bmarker_desired.xyz(xd)
+        bmarker_current.xyz(x)
+        # Wait for the next iteration
+        rate.sleep()
+
+    print('ending motion ...')
+    fxcurrent.close()
+    fxdesired.close()
+    fq.close()
+    
+    # Read data from log files
+    xcurrent_data = np.loadtxt("/tmp/xcurrent.txt")
+    xdesired_data = np.loadtxt("/tmp/xdesired.txt")
+
+    # Generate time vector assuming constant time step
+    num_samples = xcurrent_data.shape[0]
+    time = np.linspace(0, num_samples / freq, num_samples)
+
+    # Plot position as function of time
+    plt.figure(figsize=(10, 8))
+
+    plt.subplot(3, 1, 1)
+    plt.plot(time, xcurrent_data[:, 0], label='Actual X')
+    plt.plot(time, xdesired_data[:, 0], label='Desired X', linestyle='--')
+    plt.xlabel('Time [s]')
+    plt.ylabel('X Position [m]')
+    plt.legend()
+
+    plt.subplot(3, 1, 2)
+    plt.plot(time, xcurrent_data[:, 1], label='Actual Y')
+    plt.plot(time, xdesired_data[:, 1], label='Desired Y', linestyle='--')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Y Position [m]')
+    plt.legend()
+
+    plt.subplot(3, 1, 3)
+    plt.plot(time, xcurrent_data[:, 2], label='Actual Z')
+    plt.plot(time, xdesired_data[:, 2], label='Desired Z', linestyle='--')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Z Position [m]')
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+    # Plot position in Cartesian space
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot(xcurrent_data[:, 0], xcurrent_data[:, 1], xcurrent_data[:, 2], label='Actual Path')
+    ax.plot(xdesired_data[:, 0], xdesired_data[:, 1], xdesired_data[:, 2], label='Desired Path', linestyle='--')
+    ax.set_xlabel('X [m]')
+    ax.set_ylabel('Y [m]')
+    ax.set_zlabel('Z [m]')
+    ax.legend()
+
+    plt.show()
+    time.sleep(25)
+    
