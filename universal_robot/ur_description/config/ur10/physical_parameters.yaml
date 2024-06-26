@@ -21,12 +21,14 @@ inertia_parameters:
   wrist_1_mass: 1.96
   wrist_2_mass: 1.96
   wrist_3_mass: 0.202
+  prism_mass: 1
 
   shoulder_radius: x0.060   # FROM UR5 DON'T USE
   upper_arm_radius: x0.054  # FROM UR5 DON'T USE
   elbow_radius: x0.060      # FROM UR5 DON'T USE
   forearm_radius: x0.040    # FROM UR5 DON'T USE
   wrist_radius: x0.045      # FROM UR5 DON'T USE
+  prism_radius: x0.015
 
   links:
     base:
@@ -50,6 +52,9 @@ inertia_parameters:
     wrist_3:
       radius: 0.045
       length: 0.0305
+    prism:
+      radius: 0.015
+      length: 0.493
 
   center_of_mass:
     shoulder_cog:
@@ -76,3 +81,7 @@ inertia_parameters:
       x: 0.0
       y: -0.001156
       z: -0.00149
+    prism_cog:
+      x: 0.0
+      y: 0.0
+      z: 0.24

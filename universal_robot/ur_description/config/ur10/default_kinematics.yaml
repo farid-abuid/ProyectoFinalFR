@@ -41,6 +41,13 @@ kinematics:
     roll: 1.570796326589793
     pitch: 3.141592653589793
     yaw: 3.141592653589793
+  prism:
+    x: 0
+    y: 0
+    z: 0
+    roll: 0
+    pitch: 0
+    yaw: 0
   hash: calib_17227329492635474227
 
 
