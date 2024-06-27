@@ -22,7 +22,7 @@
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"
               izz="9.655"
-              meshfile="package://kuka_kr20_description/meshes/base.stl"
+              meshfile="package://kuka_kr20_description/meshes/base_link.stl"
               meshscale="0.001 0.001 0.001" />
 
   <material name="Orange">
@@ -72,147 +72,128 @@
   <gazebo reference="${link_08_name}">
     <material>Gazebo/Orange</material>
   </gazebo>
-  
-  
-  <gazebo reference="${link_09_name}">
-    <material>Gazebo/Orange</material>
-  </gazebo>
-  
+
 
   <!-- BEGIN - Robot description -->
 
-  <xacro:m_joint name="${link_00_name}__${link_01_name}" type="revolute"
+  <xacro:m_joint name="q1" type="revolute"
            axis_xyz="0 0 1"
-           origin_rpy="0 0 0" origin_xyz="0 0 0.3"
+           origin_rpy="0 0 0" origin_xyz="0 0 1.08725"
            parent="${link_00_name}" child="${link_01_name}"
-           limit_e="1000" limit_l="-3" limit_u="3" limit_v="0.5" />
+           limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5" />
 
   <xacro:m_link_mesh name="${link_01_name}" color="Orange"
-              origin_rpy="1.5708 0 -1.5708" origin_xyz="0 0 0"
+              origin_rpy="1.5708 0 0" origin_xyz="0 0 -0.12725"
               mass="157.633"
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"
               izz="9.655"
-              meshfile="package://kuka_kr20_description/meshes/link1.stl"
+              meshfile="package://kuka_kr20_description/meshes/Link1.stl"
               meshscale="0.001 0.001 0.001" />
 
-  <xacro:m_joint name="${link_01_name}__${link_02_name}" type="revolute"
-           axis_xyz="0 1 0"
-           origin_rpy="0 0 0" origin_xyz="0.160 -0.095 0.220"
+  <xacro:m_joint name="q2" type="prismatic"
+           axis_xyz="0 0 1"
+           origin_rpy="0 1.5708 0" origin_xyz="0 -0.115 0"
            parent="${link_01_name}" child="${link_02_name}"
-           limit_e="1000" limit_l="-1.5708" limit_u="1.7453" limit_v="0.5" />
+           limit_e="1000" limit_l="0.13" limit_u="0.5" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="${link_02_name}" color="Orange"
-              origin_rpy="1.5708 0 1.5708" origin_xyz="0 0 0"
-              mass="10"
-              ixx="10" ixy="0" ixz="0"
-              iyy="10" iyz="0"
-              izz="10"
-              meshfile="package://kuka_kr20_description/meshes/link2.stl"
+  <xacro:m_link_mesh name="${link_02_name}" color="Grey"
+              origin_rpy="0 0 -1.5708" origin_xyz="0 0.11 0"
+              mass="157.633"
+              ixx="13.235" ixy="0" ixz="0"
+              iyy="13.235" iyz="0"
+              izz="9.655"
+              meshfile="package://kuka_kr20_description/meshes/Link2.stl"
               meshscale="0.001 0.001 0.001" />
 
-  <xacro:m_joint name="${link_02_name}__${link_03_name}" type="revolute"
-           axis_xyz="0 -1 0"
-           origin_rpy="0 0 0" origin_xyz="0.00 -0.01 0.780"
+  <xacro:m_joint name="q3" type="revolute"
+           axis_xyz="0 0 1"
+           origin_rpy="0 0 0" origin_xyz="0 0 0.2835"
            parent="${link_02_name}" child="${link_03_name}"
-           limit_e="1000" limit_l="-2" limit_u="2" limit_v="0.5" />
+           limit_e="1000" limit_l="-2.15" limit_u="2.15" limit_v="0.5" />
 
   <xacro:m_link_mesh name="${link_03_name}" color="Orange"
-              origin_rpy="1.5708 0 -1.5708" origin_xyz="0 0 0"
-              mass="7"
-              ixx="5" ixy="0" ixz="0"
-              iyy="5" iyz="0"
-              izz="5"
-              meshfile="package://kuka_kr20_description/meshes/link3.stl"
-              meshscale="0.001 0.001 0.001" />
-
-  <xacro:m_joint name="${link_03_name}__${link_04_name}" type="revolute"
-           axis_xyz="1 0 0"
-           origin_rpy="0 0 0" origin_xyz="0.700 0.105 0.150"
-           parent="${link_03_name}" child="${link_04_name}"
-           limit_e="1000" limit_l="-3.0" limit_u="3.0" limit_v="0.5" />
-
-  <xacro:m_link_mesh name="${link_04_name}" color="Orange"
-              origin_rpy="1.5708 0 1.5708" origin_xyz="0 0 0"
-              mass="2"
-              ixx="1" ixy="0" ixz="0"
-              iyy="1" iyz="0"
-              izz="1"
-              meshfile="package://kuka_kr20_description/meshes/link4.stl"
-              meshscale="0.001 0.001 0.001" />
-
-  <xacro:m_joint name="${link_04_name}__${link_05_name}" type="revolute"
-           axis_xyz="0 -1 0"
-           origin_rpy="0 0 0" origin_xyz="0.155 0.000 0.000"
-           parent="${link_04_name}" child="${link_05_name}"
-           limit_e="1000" limit_l="-3.0" limit_u="3.0" limit_v="0.5" />
-
-  <xacro:m_link_mesh name="${link_05_name}" color="Orange"
-              origin_rpy="1.5708 0 1.5708" origin_xyz="0 0 0"
-              mass="2"
-              ixx="1" ixy="0" ixz="0"
-              iyy="1" iyz="0"
-              izz="1"
-              meshfile="package://kuka_kr20_description/meshes/link5.stl"
+              origin_rpy="0 0 -1.5708" origin_xyz="0 0 -0.08675"
+              mass="157.633"
+              ixx="13.235" ixy="0" ixz="0"
+              iyy="13.235" iyz="0"
+              izz="9.655"
+              meshfile="package://kuka_kr20_description/meshes/Link3.stl"
               meshscale="0.001 0.001 0.001" />
               
-  <!-- GRIPPER START HERE -->
+  <xacro:m_joint name="q4" type="revolute"
+           axis_xyz="0 0 1"
+           origin_rpy="0 0 0" origin_xyz="0 -0.656 -0.13225"
+           parent="${link_03_name}" child="${link_04_name}"
+           limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5" />
 
-  <xacro:m_joint name="${link_05_name}__${gripper_name}" type="revolute"
-           axis_xyz="1 0 0"
-           origin_rpy="0 0 0" origin_xyz="0.115 0 0"
-           parent="${link_05_name}" child="${gripper_name}"
-           limit_e="1000" limit_l="-1.57" limit_u="1.57" limit_v="0.5" />
-
-  <xacro:m_link_mesh name="${gripper_name}" color="Black"
-              origin_rpy="1.5708 0 1.5708" origin_xyz="0 0 0"
-              mass="1"
-              ixx="1" ixy="0" ixz="0"
-              iyy="1" iyz="0"
-              izz="1"
-              meshfile="package://kuka_kr20_description/meshes/gripper_base.stl"
+  <xacro:m_link_mesh name="${link_04_name}" color="Grey"
+              origin_rpy="0 0 -1.5708" origin_xyz="0 0 -0.06425"
+              mass="157.633"
+              ixx="13.235" ixy="0" ixz="0"
+              iyy="13.235" iyz="0"
+              izz="9.655"
+              meshfile="package://kuka_kr20_description/meshes/Link4.stl"
               meshscale="0.001 0.001 0.001" />
 
-  <xacro:m_joint name="${gripper_name}__gripper_left" type="prismatic"
-           axis_xyz="1 0 0"
-           origin_rpy="1.5708 0 1.5708" origin_xyz="0.04 0.00 0.000"
-           parent="${gripper_name}" child="gripper_left"
-           limit_e="1000" limit_l="-0.09" limit_u="0.00" limit_v="0.5" />
+  <xacro:m_joint name="q5" type="revolute"
+           axis_xyz="0 0 1"
+           origin_rpy="0 0 0" origin_xyz="0 -0.531 0.1565"
+           parent="${link_04_name}" child="${link_05_name}"
+           limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="gripper_left" color="Grey"
-              origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="0.1"
-              ixx="1" ixy="0" ixz="0"
-              iyy="1" iyz="0"
-              izz="1"
-              meshfile="package://kuka_kr20_description/meshes/gripper_left.stl"
+  <xacro:m_link_mesh name="${link_05_name}" color="Orange"
+              origin_rpy="0 -1.5708 1.5708" origin_xyz="0 0 0"
+              mass="157.633"
+              ixx="13.235" ixy="0" ixz="0"
+              iyy="13.235" iyz="0"
+              izz="9.655"
+              meshfile="package://kuka_kr20_description/meshes/Link5.stl"
               meshscale="0.001 0.001 0.001" />
 
-  <xacro:m_joint name="${gripper_name}__gripper_right" type="prismatic"
-           axis_xyz="1 0 0"
-           origin_rpy="1.5708 0 1.5708" origin_xyz="0.04 0.00 0.000"
-           parent="${gripper_name}" child="gripper_right"
-           limit_e="1000" limit_l="0.00" limit_u="0.09" limit_v="0.5" />
+   <xacro:m_joint name="q6" type="revolute"
+           axis_xyz="0 0 1"
+           origin_rpy="1.5708 0 0" origin_xyz="0 -0.1605 0"
+           parent="${link_05_name}" child="${link_06_name}"
+           limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="gripper_right" color="Grey"
-              origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="0.1"
-              ixx="1" ixy="0" ixz="0"
-              iyy="1" iyz="0"
-              izz="1"
-              meshfile="package://kuka_kr20_description/meshes/gripper_right.stl"
+  <xacro:m_link_mesh name="${link_06_name}" color="Grey"
+              origin_rpy="0 -1.5708 1.5708" origin_xyz="0 0 -0.0605"
+              mass="157.633"
+              ixx="13.235" ixy="0" ixz="0"
+              iyy="13.235" iyz="0"
+              izz="9.655"
+              meshfile="package://kuka_kr20_description/meshes/Link6.stl"
               meshscale="0.001 0.001 0.001" />
 
-  <!-- GRIPPER END HERE -->
+   <xacro:m_joint name="q7" type="revolute"
+           axis_xyz="0 0 1"
+           origin_rpy="-1.5708 0 0" origin_xyz="0 0 0"
+           parent="${link_06_name}" child="${link_07_name}"
+           limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5" />
 
-  <!-- END - Robot description -->
-  
-  <gazebo>
-    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-      <robotNamespace>/kr20</robotNamespace>
-      <legacyModeNS>true</legacyModeNS>
-    </plugin>
-  </gazebo>
+  <xacro:m_link_mesh name="${link_07_name}" color="Orange"
+              origin_rpy="0 3.1416 0" origin_xyz="0 0 0.088"
+              mass="157.633"
+              ixx="13.235" ixy="0" ixz="0"
+              iyy="13.235" iyz="0"
+              izz="9.655"
+              meshfile="package://kuka_kr20_description/meshes/Link7.stl"
+              meshscale="0.001 0.001 0.001" />
+
+   <xacro:m_joint name="q8" type="prismatic"
+           axis_xyz="0 0 1"
+           origin_rpy="0 0 0" origin_xyz="0 0 0"
+           parent="${link_07_name}" child="${link_08_name}"
+           limit_e="1000" limit_l="-0.08" limit_u="0.08" limit_v="0.5" />
+
+  <xacro:m_link_mesh name="${link_08_name}" color="Black"
+              origin_rpy="0 -1.5708 0" origin_xyz="0 0 -0.15"
+              mass="157.633"
+              ixx="13.235" ixy="0" ixz="0"
+              iyy="13.235" iyz="0"
+              izz="9.655"
+              meshfile="package://kuka_kr20_description/meshes/Link_EF.stl"
+              meshscale="0.001 0.001 0.001" />
 
 </robot>
