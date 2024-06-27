@@ -61,31 +61,23 @@
     <material>Gazebo/Orange</material>
   </gazebo>
   
-  <gazebo reference="${gripper_name}">
-    <material>Gazebo/Black</material>
+  <gazebo reference="${link_06_name}">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  
+  <gazebo reference="${link_07_name}">
+    <material>Gazebo/Orange</material>
   </gazebo>
 
-  <gazebo reference="gripper_left">
-    <material>Gazebo/White</material>
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
-    <kp>1000000.0</kp>
-    <kd>1.0</kd>
-    <minDepth>0.001</minDepth>
-    <!--maxVel>0.1</maxVel>
-    <fdir1>1 0 0</fdir1-->
+  <gazebo reference="${link_08_name}">
+    <material>Gazebo/Orange</material>
   </gazebo>
-
-  <gazebo reference="gripper_right">
-    <material>Gazebo/White</material>
-    <mu1>1.0</mu1>
-    <mu2>1.0</mu2>
-    <kp>1000000.0</kp>
-    <kd>1.0</kd>
-    <minDepth>0.001</minDepth>
-    <!--maxVel>0.1</maxVel>
-    <fdir1>1 0 0</fdir1-->
+  
+  
+  <gazebo reference="${link_09_name}">
+    <material>Gazebo/Orange</material>
   </gazebo>
+  
 
   <!-- BEGIN - Robot description -->
 
