@@ -22,7 +22,7 @@ def dh(d, theta, a, alpha):
     return T
 
 
-def fkine_kr20(q):
+def fkine_robot(q):
     """
     Calcular la cinematica directa del robot UR5 dados sus valores articulares. 
     q es un vector numpy de la forma [q1, q2, q3, q4, q5, q6]
@@ -32,14 +32,16 @@ def fkine_kr20(q):
 
     # Matrices DH (completar)
     #print(q)
-    T1 = dh(0.520, q[0], 0.160, np.pi/2)
-    T2 = dh(0, q[1]+np.pi/2, 0.780, 0)
-    T3 = dh(0, q[2], 0.150, np.pi/2)
-    T4 = dh(0.860, q[3]+np.pi, 0, np.pi/2)
-    T5 = dh(0, q[4]+np.pi, 0, np.pi/2)
-    T6 = dh(0.153, q[5], 0, 0)
+    T1 = dh(1.08725, q[0]+np.pi/2, 0, np.pi/2)
+    T2 = dh(q[1]+0.2835, np.pi, 0.115, 0)
+    T3 = dh(-0.13225, q[2], 0.656, 0)
+    T4 = dh(0.1565, q[3], 0.531, 0)
+    T5 = dh(0, q[4]+np.pi/2, 0, np.pi/2)
+    T6 = dh(0.1605, q[5]+np.pi, 0, np.pi/2)
+    T7 = dh(0, q[6], 0, 0)
+    T8 = dh(q[7]+0.525, 0, 0, 0)
     # Efector final con respecto a la base
-    T = T1 @ T2 @ T3 @ T4 @ T5 @ T6
+    T = T1 @ T2 @ T3 @ T4 @ T5 @ T6 @ T7 @ T8 
     return T
 
 
@@ -58,7 +60,7 @@ def jacobian_position(q, delta=0.0001):
         # Copiar la configuracion articular inicial (usar este dq para cada
         # incremento en una articulacion)
         dq = copy(q)
-        T = fkine_kr20(dq)
+        T = fkine_robot(dq)
         # Incrementar la articulacion i-esima usando un delta
         dq[i] = dq[i] + delta
         # Transformacion homogenea luego del incremento (q+dq)

@@ -4,7 +4,7 @@ import rospy
 from sensor_msgs.msg import JointState
 
 from markers import *
-from lab5functions import *
+from projectfunctions import *
 
 if __name__ == '__main__':
     
@@ -13,12 +13,12 @@ if __name__ == '__main__':
     bmarker = BallMarker(color['GREEN'])
 
     # Joint names
-    jnames = ['base__link01', 'link01__link02', 'link02__link03', 'link03__link04', 'link04__link05', 'link05__gripper']
+    jnames = ['q1','q2','q3','q4','q5','q6','q7','q8',]
     # Joint Configuration
-    q = np.array([0, np.pi/2, 0, np.pi/2, 0, 0])
+    q = np.array([0, 0.5, 0, np.pi/4, 0, np.pi/4, 0, 0.2])
 
     # End effector with respect to the base
-    T = fkine_kr20(q)
+    T = fkine_robot(q)
     print( np.round(T, 3) )
     bmarker.position(T)
 
