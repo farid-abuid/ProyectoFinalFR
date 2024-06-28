@@ -15,10 +15,10 @@ if __name__ == '__main__':
     # Joint names
     jnames = ['q1','q2','q3','q4','q5','q6','q7','q8',]
     # Joint Configuration
-    q = np.array([0, 0.5, 0, np.pi/4, 0, np.pi/4, 0, 0.2])
+    q = np.array([0, 0, 0, 0, 0, 0, 0, 0])
 
     # End effector with respect to the base
-    T = fkine_robot(q)
+    T = fkine_elbry420(q)
     print( np.round(T, 3) )
     bmarker.position(T)
 

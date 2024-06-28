@@ -4,6 +4,12 @@ from copy import copy
 pi = np.pi
 
 
+def limitJoints(q):
+    q[1] = max(min(q[1], 0.5), 0.13)
+    q[2] = max(min(q[2], 2.15), -2.15)
+    q[7] = max(min(q[7], 0.15), -0.08)
+
+
 def dh(d, theta, a, alpha):
     """
     Calcular la matriz de transformacion homogenea asociada con los parametros
@@ -22,10 +28,10 @@ def dh(d, theta, a, alpha):
     return T
 
 
-def fkine_robot(q):
+def fkine_elbry420(q):
     """
-    Calcular la cinematica directa del robot UR5 dados sus valores articulares. 
-    q es un vector numpy de la forma [q1, q2, q3, q4, q5, q6]
+    Calcular la cinematica directa del robot dados sus valores articulares. 
+    q es un vector numpy de la forma [q1, q2, q3, q4, q5, q6, q7, q8]
 
     """
     # Longitudes (en metros)
@@ -44,6 +50,81 @@ def fkine_robot(q):
     T = T1 @ T2 @ T3 @ T4 @ T5 @ T6 @ T7 @ T8 
     return T
 
+def ikine_newton_elbry420(xdes, q0):
+    """
+    Calcular la cinematica inversa de numericamente a partir de la configuracion articular inicial de q0.
+    Emplear el metodo de newton
+    """
+    epsilon  = 0.001
+    max_iter = 1000
+    delta    = 0.00001
+
+    q  = copy(q0)
+     # Almacenamiento del error
+    ee = []
+   
+    # Bucle principal
+    for i in range(max_iter):
+        limitJoints(q)
+        J = jacobian_position(q)
+        f = fkine_elbry420(q)[0:3,3]
+        #print(J)
+        # Error
+        e = xdes-f
+        # Actualización de q (método de Newton)
+        q = q + np.dot(np.linalg.pinv(J), e)
+
+        # Norma del error
+        enorm = np.linalg.norm(e)
+        print("Error en la iteración {}: {}".format(i, np.round(enorm,4)))
+        ee.append(enorm)    # Almacena los errores
+       
+        # Condición de término
+        if (np.linalg.norm(e) < epsilon):
+            break
+        if (i==max_iter-1):
+            print("El algoritmo no llegó al valor deseado")
+
+    return q
+
+def ikine_gradient_elbry420(xdes, q0):
+    """
+    Calcular la cinematica inversa numericamente a partir de la configuracion articular inicial de q0.
+    Emplear el metodo gradiente
+    """
+    epsilon  = 0.001
+    max_iter = 1000
+    delta    = 0.00001
+    alfa = 0.2
+    q  = copy(q0)
+    #Almacenamiento del error
+    ee = []
+   
+    # Bucle principal
+    for i in range(max_iter):
+        limitJoints(q)
+        J = jacobian_position(q)
+        #print(q)
+        f = fkine_elbry420(q)[0:3,3]
+        # Error
+        e = xdes-f
+        # Actualización de q
+        q = q + alfa*np.dot(J.T, e)
+
+        # Norma del error
+        enorm = np.linalg.norm(e)
+        print("Error en la iteración {}: {}".format(i, np.round(enorm,4)))
+        ee.append(enorm)    # Almacena los errores
+       
+        # Condición de término
+        if (np.linalg.norm(e) < epsilon):
+            print("Cinemática inversa: solución obtenida")
+            break
+        if (i==max_iter-1):
+            print("No se llegó a la solución deseada: modificar el valor de alfa")
+    return q
+
+
 
 def jacobian_position(q, delta=0.0001):
     """
@@ -52,23 +133,25 @@ def jacobian_position(q, delta=0.0001):
 
     """
     # Alocacion de memoria
-    J = np.zeros((3,6))
+    J = np.zeros((3,8))
     # Transformacion homogenea inicial (usando q)
-    T = fkine_kr20(q)
+    T = fkine_elbry420(q)
     # Iteracion para la derivada de cada columna
-    for i in range(6):
+    for i in range(8):
         # Copiar la configuracion articular inicial (usar este dq para cada
         # incremento en una articulacion)
         dq = copy(q)
-        T = fkine_robot(dq)
+        T = fkine_elbry420(dq)
         # Incrementar la articulacion i-esima usando un delta
         dq[i] = dq[i] + delta
         # Transformacion homogenea luego del incremento (q+dq)
-        T_inc = fkine_kr20(dq)
+        T_inc = fkine_elbry420(dq)
         # Aproximacion del Jacobiano de posicion usando diferencias finitas
         J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])/delta
 	
     return J
+
+
 
 
 def jacobian_pose(q, delta=0.0001):
@@ -78,17 +161,17 @@ def jacobian_pose(q, delta=0.0001):
     configuracion articular q=[q1, q2, q3, q4, q5, q6]
 
     """
-    J = np.zeros((7,6))
+    J = np.zeros((7,8))
     # Implementar este Jacobiano aqui
-    T = fkine_kr20(q)
+    T = fkine_elbry420(q)
     Q = rot2quat(T)
-    for i in range(6):
+    for i in range(8):
     	dq = copy(q)
-    	T = fkine_kr20(dq)
+    	T = fkine_elbry420(dq)
     	Q = rot2quat(T)
     	dq[i] = dq[i] + delta
     	
-    	T_inc = fkine_kr20(dq)
+    	T_inc = fkine_elbry420(dq)
     	Q_inc = rot2quat(T_inc)
     	
     	J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])/delta
