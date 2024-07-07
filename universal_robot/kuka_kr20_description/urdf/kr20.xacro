@@ -16,8 +16,8 @@
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
 
-  <xacro:m_link_mesh name="${link_00_name}" color="Black"
-              origin_rpy="1.5708 0 3.1416" origin_xyz="0 0 0"
+  <xacro:m_link_mesh name="${link_00_name}" color="White"
+              origin_rpy="0 0 0" origin_xyz="0 0 0"
               mass="157.633"
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"
@@ -25,52 +25,56 @@
               meshfile="package://kuka_kr20_description/meshes/base_link.stl"
               meshscale="0.001 0.001 0.001" />
 
-  <material name="Orange">
-    <color rgba="0.95 0.5 0.15 1.0"/>
+  <material name="DarkGreen">
+    <color rgba="0 0.36 0.012 1.0"/>
   </material>
-
+  
+  <material name="LightGreen">
+    <color rgba="0.82 0.95 0.82 1.0"/>
+  </material>  
+  
+  <material name="White">
+    <color rgba="0.96 0.96 0.96 1.0"/>
+  </material>
+  
   <material name="Grey">
-    <color rgba="0.7 0.7 0.7 1.0"/>
-  </material>
-
-  <material name="Black">
-    <color rgba="0.0 0.0 0.0 1.0"/>
+    <color rgba="0.56 0.56 0.56 1.0"/>
   </material>
 
   <gazebo reference="${link_00_name}">
-    <material>Gazebo/Black</material>
+    <material>Gazebo/White</material>
   </gazebo>
 
   <gazebo reference="${link_01_name}">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/Grey</material>
   </gazebo>
 
   <gazebo reference="${link_02_name}">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/DarkGreen</material>
   </gazebo>
 
   <gazebo reference="${link_03_name}">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/LightGreen</material>
   </gazebo>
 
   <gazebo reference="${link_04_name}">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/LightGreen</material>
   </gazebo>
 
   <gazebo reference="${link_05_name}">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/LightGreen</material>
   </gazebo>
   
   <gazebo reference="${link_06_name}">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/LightGreen</material>
   </gazebo>
   
   <gazebo reference="${link_07_name}">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/LightGreen</material>
   </gazebo>
 
   <gazebo reference="${link_08_name}">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/Grey</material>
   </gazebo>
 
 
@@ -78,12 +82,12 @@
 
   <xacro:m_joint name="q1" type="revolute"
            axis_xyz="0 0 1"
-           origin_rpy="0 0 0" origin_xyz="0 0 1.08725"
+           origin_rpy="0 0 0" origin_xyz="0 0 1.65"
            parent="${link_00_name}" child="${link_01_name}"
            limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="${link_01_name}" color="Orange"
-              origin_rpy="1.5708 0 0" origin_xyz="0 0 -0.12725"
+  <xacro:m_link_mesh name="${link_01_name}" color="Grey"
+              origin_rpy="0 0 0" origin_xyz="0 0 0"
               mass="157.633"
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"
@@ -92,13 +96,13 @@
               meshscale="0.001 0.001 0.001" />
 
   <xacro:m_joint name="q2" type="prismatic"
-           axis_xyz="0 0 1"
-           origin_rpy="0 1.5708 0" origin_xyz="0 -0.115 0"
+           axis_xyz="0 1 0"
+           origin_rpy="0 0 0" origin_xyz="0 0.37775 0.089"
            parent="${link_01_name}" child="${link_02_name}"
-           limit_e="1000" limit_l="0.13" limit_u="0.5" limit_v="0.5" />
+           limit_e="1000" limit_l="-0.192" limit_u="0.216" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="${link_02_name}" color="Grey"
-              origin_rpy="0 0 -1.5708" origin_xyz="0 0.11 0"
+  <xacro:m_link_mesh name="${link_02_name}" color="DarkGreen"
+              origin_rpy="0 0 0" origin_xyz="0 0 0"
               mass="157.633"
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"
@@ -107,13 +111,13 @@
               meshscale="0.001 0.001 0.001" />
 
   <xacro:m_joint name="q3" type="revolute"
-           axis_xyz="0 0 1"
-           origin_rpy="0 0 0" origin_xyz="0 0 0.2835"
+           axis_xyz="0 1 0"
+           origin_rpy="0 0 0" origin_xyz="0.115 0.11 0"
            parent="${link_02_name}" child="${link_03_name}"
            limit_e="1000" limit_l="-2.15" limit_u="2.15" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="${link_03_name}" color="Orange"
-              origin_rpy="0 0 -1.5708" origin_xyz="0 0 -0.08675"
+  <xacro:m_link_mesh name="${link_03_name}" color="LightGreen"
+              origin_rpy="0 0 0" origin_xyz="0 0 0"
               mass="157.633"
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"
@@ -122,13 +126,13 @@
               meshscale="0.001 0.001 0.001" />
               
   <xacro:m_joint name="q4" type="revolute"
-           axis_xyz="0 0 1"
-           origin_rpy="0 0 0" origin_xyz="0 -0.656 -0.13225"
+           axis_xyz="0 1 0"
+           origin_rpy="0 0 0" origin_xyz="0.65625 0.0225 0"
            parent="${link_03_name}" child="${link_04_name}"
            limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="${link_04_name}" color="Grey"
-              origin_rpy="0 0 -1.5708" origin_xyz="0 0 -0.06425"
+  <xacro:m_link_mesh name="${link_04_name}" color="LightGreen"
+              origin_rpy="0 0 0" origin_xyz="0 0 0"
               mass="157.633"
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"
@@ -137,13 +141,13 @@
               meshscale="0.001 0.001 0.001" />
 
   <xacro:m_joint name="q5" type="revolute"
-           axis_xyz="0 0 1"
-           origin_rpy="0 0 0" origin_xyz="0 -0.531 0.1565"
+           axis_xyz="0 1 0"
+           origin_rpy="0 0 0" origin_xyz=" 0.531 -0.011475 0"
            parent="${link_04_name}" child="${link_05_name}"
            limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="${link_05_name}" color="Orange"
-              origin_rpy="0 -1.5708 1.5708" origin_xyz="0 0 0"
+  <xacro:m_link_mesh name="${link_05_name}" color="LightGreen"
+              origin_rpy="0 0 0" origin_xyz="0 0 0"
               mass="157.633"
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"
@@ -152,13 +156,13 @@
               meshscale="0.001 0.001 0.001" />
 
    <xacro:m_joint name="q6" type="revolute"
-           axis_xyz="0 0 1"
-           origin_rpy="1.5708 0 0" origin_xyz="0 -0.1605 0"
+           axis_xyz="1 0 0"
+           origin_rpy="0 0 0" origin_xyz="0.0985 0.1 0"
            parent="${link_05_name}" child="${link_06_name}"
            limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="${link_06_name}" color="Grey"
-              origin_rpy="0 -1.5708 1.5708" origin_xyz="0 0 -0.0605"
+  <xacro:m_link_mesh name="${link_06_name}" color="LightGreen"
+              origin_rpy="0 0 0" origin_xyz="0 0 0"
               mass="157.633"
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"
@@ -167,13 +171,13 @@
               meshscale="0.001 0.001 0.001" />
 
    <xacro:m_joint name="q7" type="revolute"
-           axis_xyz="0 0 1"
-           origin_rpy="-1.5708 0 0" origin_xyz="0 0 0"
+           axis_xyz="0 1 0"
+           origin_rpy="0 0 0" origin_xyz="0.0605 0.057 0"
            parent="${link_06_name}" child="${link_07_name}"
            limit_e="1000" limit_l="-3.14" limit_u="3.14" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="${link_07_name}" color="Orange"
-              origin_rpy="0 3.1416 0" origin_xyz="0 0 0.088"
+  <xacro:m_link_mesh name="${link_07_name}" color="Grey"
+              origin_rpy="0 0 0" origin_xyz="0 0 0"
               mass="157.633"
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"
@@ -182,13 +186,13 @@
               meshscale="0.001 0.001 0.001" />
 
    <xacro:m_joint name="q8" type="prismatic"
-           axis_xyz="0 0 1"
-           origin_rpy="0 0 0" origin_xyz="0 0 0"
+           axis_xyz="0 1 0"
+           origin_rpy="0 0 0" origin_xyz="0 -0.092 0"
            parent="${link_07_name}" child="${link_08_name}"
-           limit_e="1000" limit_l="-0.08" limit_u="0.08" limit_v="0.5" />
+           limit_e="1000" limit_l="0" limit_u="0.1" limit_v="0.5" />
 
-  <xacro:m_link_mesh name="${link_08_name}" color="Black"
-              origin_rpy="0 -1.5708 0" origin_xyz="0 0 -0.15"
+  <xacro:m_link_mesh name="${link_08_name}" color="Grey"
+              origin_rpy="0 0 0" origin_xyz="0 0 0"
               mass="157.633"
               ixx="13.235" ixy="0" ixz="0"
               iyy="13.235" iyz="0"

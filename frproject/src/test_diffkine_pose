@@ -4,7 +4,7 @@ import rospy
 from sensor_msgs.msg import JointState
 
 from markers import *
-from lab5functions import *
+from projectfunctions import *
 
 if __name__ == '__main__':
     
@@ -18,20 +18,20 @@ if __name__ == '__main__':
     bmarker_desired = FrameMarker(0.5)
 
     # Joint names
-    jnames = ['base__link01', 'link01__link02', 'link02__link03', 'link03__link04', 'link04__link05', 'link05__gripper']
+    jnames = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7',  'q8']
 
     # Desired pose
-    ang = pi/3
-    Rd = np.array([[0,1,0],[1,0,0],[0,0,-1]])
+    ang_rpy = [0, np.pi/2, 0]   #XYZ
+    Rd = rotx(ang_rpy[0]) @ roty(ang_rpy[1]) @ rotz(ang_rpy[2])
     qd = rot2quat(Rd)
     # Find an xd that the robot can reach
-    xd = np.array([0.8, 0.0, 0.9, qd[0], qd[1], qd[2], qd[3]])
+    xd = np.array([0.8, 1.3, 0.9, qd[0], qd[1], qd[2], qd[3]])
     #xd  = np.array([0.5, 0.5, 0.6, np.cos(ang/2.0), 0, 0, np.sin(ang/2.0)])
     # Initial configuration
-    q0  = np.array([0.0, -0.42, -0.32, 0, -1.65, 0])
+    q0  = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
     # Resulting initial pose (end effector with respect to the base link)
-    T = fkine_kr20(q0)
+    T = fkine_elbry420(q0)
     x0 = TF2xyzquat(T)
 
     # Markers for the current and the desired pose
@@ -67,11 +67,17 @@ if __name__ == '__main__':
         
         # -----------------------------
         # Kinematic control law for the pose (complete here)
-         #error = (x-xd)
-        print(q)
-        T = fkine_kr20(q)
-   
-        e = np.subtract(TF2xyzquat(T), xd)
+        #error = (x-xd)
+        #print(q)
+        T = fkine_elbry420(q)
+        quat = TF2xyzquat(T)[3:7]
+        x = TF2xyzquat(T)[0:3]
+        
+        qe = np.hstack(( qd[0]*quat[0]+(qd[1:4].T*quat[1:4]) ) , ( -qd[0]*quat[1:4] 
+        + quat[0]*qd[1:4] - np.cross(qd[1:4], quat[1:4]) )) 
+        xe = np.subtract(x.T,xd[0:3])
+        
+        e = vstack(xe, qe)
         #print(np.size(TF2xyzquat(T)))
         #print(np.size(xd))
         #print(TF2xyzquat(T))
@@ -79,7 +85,6 @@ if __name__ == '__main__':
         k = 0.1
         edot = np.dot(-k, e)
         #edot = edot.reshape(1, -1)
-	
         k_amort = 0.01
         k_amort = k_amort*k_amort
 	#Pseudoinversa de J
@@ -89,17 +94,13 @@ if __name__ == '__main__':
             Jpseudo = np.dot(J.T, np.linalg.inv(np.dot(J, J.T)+np.dot(k_amort, np.identity(7))))
         else:
             Jpseudo = np.linalg.pinv(J)
-            
-	#np.dot(np.linalg(np.dot(J.T, J)),J.T)
-	
-	#skew?
-	
+        #np.dot(np.linalg(np.dot(J.T, J)),J.T)
+        #%skew?
         qdot = np.dot(Jpseudo, edot.T)
         q = (q + np.dot(dt, qdot))[0]
         print(np.dot(dt, qdot))
         # -----------------------------
-
-        # Current configuration trnaformation to current position
+         # Current configuration trnaformation to current position
         T = fkine_kr20(q)
         x = TF2xyzquat(T)
         # Publish the message
@@ -109,3 +110,60 @@ if __name__ == '__main__':
         bmarker_current.setPose(x)
         # Wait for the next iteration
         rate.sleep()
+        
+    print('ending motion ...')
+    fxcurrent.close()
+    fxdesired.close()
+    fq.close()
+    
+    # Read data from log files
+    xcurrent_data = np.loadtxt("/tmp/xcurrent.txt")
+    xdesired_data = np.loadtxt("/tmp/xdesired.txt")
+    q_data = np.loadtxt("/tmp/q.txt")
+
+    # Generate time vector assuming constant time step
+    num_samples = xcurrent_data.shape[0]
+    time = np.linspace(0, num_samples / freq, num_samples)
+
+    # Plot position as function of time
+    plt.figure(figsize=(10, 8))
+
+    plt.subplot(3, 1, 1)
+    plt.plot(time, xcurrent_data[:, 0], label='Actual X')
+    plt.plot(time, xdesired_data[:, 0], label='Desired X', linestyle='--')
+    plt.xlabel('Time [s]')
+    plt.ylabel('X Position [m]')
+    plt.legend()
+
+    plt.subplot(3, 1, 2)
+    plt.plot(time, xcurrent_data[:, 1], label='Actual Y')
+    plt.plot(time, xdesired_data[:, 1], label='Desired Y', linestyle='--')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Y Position [m]')
+    plt.legend()
+
+    plt.subplot(3, 1, 3)
+    plt.plot(time, xcurrent_data[:, 2], label='Actual Z')
+    plt.plot(time, xdesired_data[:, 2], label='Desired Z', linestyle='--')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Z Position [m]')
+    plt.legend()
+
+    plt.tight_layout()
+    
+    # Plot articular position qn
+    n = 8
+    plt.figure(figsize=(10, 8))
+    plt.plot(time, q_data[:, n-1], label=(f"q{n} position"))
+    plt.xlabel('Time [s]')
+    plt.ylabel(f"q{n} position [rad]")
+    plt.legend()
+        
+    plt.show()
+
+    # Plot position in Cartesian space
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    ax.plot(xcurrent_data[:, 0], xcurrent_data[:, 1], xcurrent_data[:, 2], label='End Effector Path')
+    # Plot a single dot at the last position in xcurrent_data
+    ax.scatter(xcurrent_data[-1, 0], xcurrent_data[-1, 1], xcurrent_data[-1, 2], color='red', s=100,  label='End Position')

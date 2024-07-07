@@ -2,10 +2,11 @@
 
 import rospy
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from sensor_msgs.msg import JointState
 
 from markers import *
-from lab5functions import *
+from projectfunctions import *
 import time
 
 if __name__ == '__main__':
@@ -25,15 +26,15 @@ if __name__ == '__main__':
     bmarker_desired = BallMarker(color['GREEN'])
 
     # Joint names
-    jnames = ['base__link01', 'link01__link02', 'link02__link03', 'link03__link04', 'link04__link05', 'link05__gripper']
+    jnames = ['q1','q2','q3','q4','q5','q6','q7','q8']
 
     # Desired position
-    xd = np.array([0.8, 0.0, 0.8])
+    xd = np.array([0.6, 0.6, 0.5])
     # Initial configuration
-    q0 = np.array([0.0, -0.42, -0.32, 0, -1.65, 0])
+    q0 = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
     # Resulting initial position (end effector with respect to the base link)
-    T = fkine_kr20(q0)
+    T = fkine_elbry420(q0)
     x0 = T[0:3,3]
 
     # Red marker shows the achieved position
@@ -63,7 +64,8 @@ if __name__ == '__main__':
         # Kinematic control law for position (complete here)
         # -----------------------------
         #error = (x-xd)
-        x = fkine_kr20(q)[0:3,3]
+        x = fkine_elbry420(q)[0:3,3]
+        
         
         e = np.subtract(x.T,xd)
         k = 0.5
@@ -77,7 +79,7 @@ if __name__ == '__main__':
 	
         qdot = np.dot(Jpseudo, edot)
         q = q + np.dot(dt, qdot)
-        
+        limitJoints(q)
         # -----------------------------
 
         
@@ -85,7 +87,7 @@ if __name__ == '__main__':
         fxcurrent.write(str(x[0])+' '+str(x[1]) +' '+str(x[2])+'\n')
         fxdesired.write(str(xd[0])+' '+str(xd[1])+' '+str(xd[2])+'\n')
         fq.write(str(q[0])+" "+str(q[1])+" "+str(q[2])+" "+str(q[3])+" "+
-                 str(q[4])+" "+str(q[5])+"\n")
+                 str(q[4])+" "+str(q[5])+" "+str(q[6])+" "+str(q[7])+"\n")
         
         # Publish the message
         jstate.position = q
@@ -103,6 +105,7 @@ if __name__ == '__main__':
     # Read data from log files
     xcurrent_data = np.loadtxt("/tmp/xcurrent.txt")
     xdesired_data = np.loadtxt("/tmp/xdesired.txt")
+    q_data = np.loadtxt("/tmp/q.txt")
 
     # Generate time vector assuming constant time step
     num_samples = xcurrent_data.shape[0]
@@ -133,18 +136,31 @@ if __name__ == '__main__':
     plt.legend()
 
     plt.tight_layout()
+    
+    # Plot articular position qn
+    n = 8
+    plt.figure(figsize=(10, 8))
+    plt.plot(time, q_data[:, n-1], label=(f"q{n} position"))
+    plt.xlabel('Time [s]')
+    plt.ylabel(f"q{n} position [rad]")
+    plt.legend()
+        
     plt.show()
 
     # Plot position in Cartesian space
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot(xcurrent_data[:, 0], xcurrent_data[:, 1], xcurrent_data[:, 2], label='Actual Path')
-    ax.plot(xdesired_data[:, 0], xdesired_data[:, 1], xdesired_data[:, 2], label='Desired Path', linestyle='--')
+    ax = fig.gca(projection='3d')
+    ax.plot(xcurrent_data[:, 0], xcurrent_data[:, 1], xcurrent_data[:, 2], label='End Effector Path')
+    # Plot a single dot at the last position in xcurrent_data
+    ax.scatter(xcurrent_data[-1, 0], xcurrent_data[-1, 1], xcurrent_data[-1, 2], color='red', s=100,  label='End Position')
+    
+    ax.scatter(xcurrent_data[0, 0], xcurrent_data[0, 1], xcurrent_data[0, 2], color='green', s=100,  label='Start Position')
+    
     ax.set_xlabel('X [m]')
     ax.set_ylabel('Y [m]')
     ax.set_zlabel('Z [m]')
     ax.legend()
 
     plt.show()
-    time.sleep(25)
+
     

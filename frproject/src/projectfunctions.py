@@ -1,8 +1,11 @@
 import numpy as np
 from copy import copy
+import rbdl
 
 pi = np.pi
-
+cos = np.cos
+sin = np.sin
+pi = np.pi
 
 def limitJoints(q):
     q[1] = max(min(q[1], 0.5), 0.13)
@@ -147,18 +150,21 @@ def jacobian_position(q, delta=0.0001):
         # Transformacion homogenea luego del incremento (q+dq)
         T_inc = fkine_elbry420(dq)
         # Aproximacion del Jacobiano de posicion usando diferencias finitas
-        J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])/delta
+        if (i==1 or i==7):
+            J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])*(0.05)/delta
+        else:
+            J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])/delta
 	
     return J
 
 
 
-
+'''
 def jacobian_pose(q, delta=0.0001):
     """
     Jacobiano analitico para la posicion y orientacion (usando un
-    cuaternion). Retorna una matriz de 7x6 y toma como entrada el vector de
-    configuracion articular q=[q1, q2, q3, q4, q5, q6]
+    cuaternion). Retorna una matriz de 7x8 y toma como entrada el vector de
+    configuracion articular q=[q1, q2, q3, q4, q5, q6, q7, q8]
 
     """
     J = np.zeros((7,8))
@@ -170,15 +176,40 @@ def jacobian_pose(q, delta=0.0001):
     	T = fkine_elbry420(dq)
     	Q = rot2quat(T)
     	dq[i] = dq[i] + delta
-    	
     	T_inc = fkine_elbry420(dq)
     	Q_inc = rot2quat(T_inc)
     	
-    	J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])/delta
-    	J[3:7,i]=(Q_inc[0:4]-Q[0:4]).T/delta
+    	if (i==1 or i==7):
+            J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])*(0.05)/delta
+        else:
+            J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])/delta
+        J[3:7,i]=(Q_inc[0:4]-Q[0:4]).T/delta
     return J
 
+'''
 
+
+class Robot(object):
+    def __init__(self, q0, dq0, ndof, dt):
+        self.q = q0    # numpy array (ndof x 1)
+        self.dq = dq0  # numpy array (ndof x 1)
+        self.M = np.zeros([ndof, ndof])
+        self.b = np.zeros(ndof)
+        self.dt = dt
+        self.robot = rbdl.loadModel('/home/farid/project_ws/src/universal_robot/kuka_kr20_description/urdf/kr20.urdf')
+
+    def send_command(self, tau):
+        rbdl.CompositeRigidBodyAlgorithm(self.robot, self.q, self.M)
+        rbdl.NonlinearEffects(self.robot, self.q, self.dq, self.b)
+        ddq = np.linalg.inv(self.M).dot(tau-self.b)
+        self.q = self.q + self.dt*self.dq
+        self.dq = self.dq + self.dt*ddq
+
+    def read_joint_positions(self):
+        return self.q
+
+    def read_joint_velocities(self):
+        return self.dq
 
 def rot2quat(R):
     """
@@ -243,3 +274,21 @@ def is_singular(matrix):
         return True
     else:
         return False
+        
+def roty(ang):
+    Ry = np.array([[cos(ang), 0, sin(ang)],
+                   [0, 1, 0],
+                   [-sin(ang), 0, cos(ang)]])
+    return Ry
+
+def rotz(ang):
+    Rz = np.array([[cos(ang), -sin(ang), 0],
+                   [sin(ang), cos(ang), 0],
+                   [0,0,1]])
+    return Rz
+
+def rotx(ang):
+    Rx = np.array([[1, 0, 0],
+                   [0, cos(ang), -sin(ang)],
+                   [0, sin(ang), cos(ang)]])
+    return Rx
