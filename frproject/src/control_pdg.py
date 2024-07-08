@@ -33,11 +33,11 @@ if __name__ == '__main__':
  
   # =============================================================
   # Configuracion articular inicial (en radianes)
-  q = np.array([0.0, -1.0, 1.7, -2.2, -1.6, 0.0, 1.5, -0.4])
+  q = np.array([0.0, -0.15, 1.7, -2.2, -1.6, 0.0, 0.01, 0.05])
   # Velocidad inicial
   dq = np.array([0., 0., 0., 0., 0., 0., 0., 0.])
   # Configuracion articular deseada
-  qdes = np.array([1.0, -1.0, 1.0, 1.3, -1.5, 1.0, -2.0, -0.12])
+  qdes = np.array([1.0, 0.2, 1.0, 1.3, -1.5, 1.0, 2.0, 0.08])
   # =============================================================
  
   # Posicion resultante de la configuracion articular deseada
@@ -51,7 +51,7 @@ if __name__ == '__main__':
   ndof = modelo.q_size     # Grados de libertad
  
   # Frecuencia del envio (en Hz)
-  freq = 30
+  freq = 90
   dt = 1.0/freq
   rate = rospy.Rate(freq)
  
@@ -59,11 +59,11 @@ if __name__ == '__main__':
   robot = Robot(q, dq, ndof, dt)
 
   # Se definen las ganancias del controlador, diagonales
-  Kp = 0.5
-  Kp = Kp*np.eye(ndof)
+  #Kp = 2
+  Kp = 5*np.diag(np.array([10, 10, 100, 100, 100, 10, 1, 10]))
  
-  Kd = 0.5
-  Kd = Kd*np.eye(ndof)
+  #Kd = 2
+  Kd = 15*np.diag(np.array([10, 10, 200, 10, 20, 10, 1, 10]))
  
   # Arrays numpy
   zeros = np.zeros(ndof)          # Vector de ceros
@@ -78,11 +78,12 @@ if __name__ == '__main__':
   t = 0.0
   while not rospy.is_shutdown():
     i+=1
-    print(i)
+    #print(i)
     # Leer valores del simulador
     q  = robot.read_joint_positions()
     dq = robot.read_joint_velocities()
     # Posicion actual del efector final
+    limitJoints(q)   
     x = fkine_elbry420(q)[0:3,3]
     # Tiempo actual (necesario como indicador para ROS)
     jstate.header.stamp = rospy.Time.now()
@@ -96,15 +97,17 @@ if __name__ == '__main__':
     # ----------------------------
     # Control dinamico (COMPLETAR)
     # ----------------------------
-   
+
     rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
+    g = np.zeros(ndof)
     u = g + Kp.dot(np.subtract(qdes, q)) - Kd.dot(dq)  # Reemplazar por la ley de control
-   
+    print(u)
    
     # Simulacion del robot
     robot.send_command(u)
 
     # Publicacion del mensaje
+
     jstate.position = q
     pub.publish(jstate)
     bmarker_deseado.xyz(xdes)
@@ -194,7 +197,7 @@ if __name__ == '__main__':
   plt.title('q8 vs t')
 
   plt.tight_layout()
-  plt.show()
+  #plt.show()
 #----------------------------------------------------------------------------------------
   # Read data from log files
   xcurrent_data = np.loadtxt("/tmp/xactual.txt")
@@ -229,7 +232,7 @@ if __name__ == '__main__':
 
   plt.tight_layout()
   plt.show()
-
+'''
  # Plot position in Cartesian space
   fig = plt.figure()
   ax = fig.gca(projection='3d')
@@ -242,3 +245,4 @@ if __name__ == '__main__':
   ax.set_zlabel('Z [m]')
   ax.legend()
   plt.show()
+  '''

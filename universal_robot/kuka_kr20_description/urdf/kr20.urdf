@@ -15,9 +15,9 @@
   </joint>
   <link name="base">
     <inertial>
-      <mass value="157.633"/>
+      <mass value="414.0"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertia ixx="13.235" ixy="0" ixz="0" iyy="13.235" iyz="0" izz="9.655"/>
+      <inertia ixx="97670000" ixy="0" ixz="0" iyy="97670000" iyz="0" izz="2170000"/>
     </inertial>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -30,50 +30,53 @@
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Black"/>
+      <material name="White"/>
     </visual>
   </link>
-  <material name="Orange">
-    <color rgba="0.95 0.5 0.15 1.0"/>
+  <material name="DarkGreen">
+    <color rgba="0 0.36 0.012 1.0"/>
+  </material>
+  <material name="LightGreen">
+    <color rgba="0.82 0.95 0.82 1.0"/>
+  </material>
+  <material name="White">
+    <color rgba="0.96 0.96 0.96 1.0"/>
   </material>
   <material name="Grey">
-    <color rgba="0.7 0.7 0.7 1.0"/>
-  </material>
-  <material name="Black">
-    <color rgba="0.0 0.0 0.0 1.0"/>
+    <color rgba="0.56 0.56 0.56 1.0"/>
   </material>
   <gazebo reference="base">
-    <material>Gazebo/Black</material>
+    <material>Gazebo/White</material>
   </gazebo>
   <gazebo reference="link01">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/Grey</material>
   </gazebo>
   <gazebo reference="link02">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/DarkGreen</material>
   </gazebo>
   <gazebo reference="link03">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/LightGreen</material>
   </gazebo>
   <gazebo reference="link04">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/LightGreen</material>
   </gazebo>
   <gazebo reference="link05">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/LightGreen</material>
   </gazebo>
   <gazebo reference="link06">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/LightGreen</material>
   </gazebo>
   <gazebo reference="link07">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/LightGreen</material>
   </gazebo>
   <gazebo reference="linkef">
-    <material>Gazebo/Orange</material>
+    <material>Gazebo/Grey</material>
   </gazebo>
   <!-- BEGIN - Robot description -->
   <joint name="q1" type="revolute">
     <axis xyz="0 0 1"/>
     <limit effort="1000" lower="-3.14" upper="3.14" velocity="0.5"/>
-    <origin rpy="1.5708 0 3.1416" xyz="0 0 1.08725"/>
+    <origin rpy="0 0 0" xyz="0 0 1.65"/>
     <parent link="base"/>
     <child link="link01"/>
   </joint>
@@ -89,28 +92,28 @@
   </transmission>
   <link name="link01">
     <inertial>
-      <mass value="157.633"/>
-      <origin rpy="0 0 0" xyz="0 0 -0.12725"/>
-      <inertia ixx="13.235" ixy="0" ixz="0" iyy="13.235" iyz="0" izz="9.655"/>
+      <mass value="24.74"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="1430" ixy="84.25" ixz="0.2969" iyy="82.08" iyz="-1.64" izz="1405"/>
     </inertial>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 -0.12725"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 -0.12725"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Orange"/>
+      <material name="Grey"/>
     </visual>
   </link>
   <joint name="q2" type="prismatic">
-    <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="0.13" upper="0.5" velocity="0.5"/>
-    <origin rpy="0 3.1416 0" xyz="0 -0.115 0"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1000" lower="-0.192" upper="0.216" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 0.37775 0.089"/>
     <parent link="link01"/>
     <child link="link02"/>
   </joint>
@@ -126,28 +129,28 @@
   </transmission>
   <link name="link02">
     <inertial>
-      <mass value="157.633"/>
-      <origin rpy="0 0 0" xyz="0 0.11 0"/>
-      <inertia ixx="13.235" ixy="0" ixz="0" iyy="13.235" iyz="0" izz="9.655"/>
+      <mass value="10.88"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="67.73" ixy="1.2" ixz="0.184" iyy="59.85" iyz="-0.005" izz="83.55"/>
     </inertial>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0.11 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <visual>
-      <origin rpy="0 0 0" xyz="0 0.11 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link2.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Grey"/>
+      <material name="DarkGreen"/>
     </visual>
   </link>
   <joint name="q3" type="revolute">
-    <axis xyz="0 0 1"/>
+    <axis xyz="0 1 0"/>
     <limit effort="1000" lower="-2.15" upper="2.15" velocity="0.5"/>
-    <origin rpy="0 0 -1.5708" xyz="0 0 0.2835"/>
+    <origin rpy="0 0 0" xyz="0.115 0.11 0"/>
     <parent link="link02"/>
     <child link="link03"/>
   </joint>
@@ -163,28 +166,28 @@
   </transmission>
   <link name="link03">
     <inertial>
-      <mass value="157.633"/>
-      <origin rpy="0 0 0" xyz="0 0 -0.08675"/>
-      <inertia ixx="13.235" ixy="0" ixz="0" iyy="13.235" iyz="0" izz="9.655"/>
+      <mass value="19.26"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="56.06" ixy="-4.0" ixz="0" iyy="1396.0" iyz="0" izz="1404.0"/>
     </inertial>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 -0.08675"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 -0.08675"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Orange"/>
+      <material name="LightGreen"/>
     </visual>
   </link>
   <joint name="q4" type="revolute">
-    <axis xyz="0 0 1"/>
+    <axis xyz="0 1 0"/>
     <limit effort="1000" lower="-3.14" upper="3.14" velocity="0.5"/>
-    <origin rpy="0 0 -1.5708" xyz="0 -0.656 -0.13225"/>
+    <origin rpy="0 0 0" xyz="0.65625 0.0225 0"/>
     <parent link="link03"/>
     <child link="link04"/>
   </joint>
@@ -200,28 +203,28 @@
   </transmission>
   <link name="link04">
     <inertial>
-      <mass value="157.633"/>
-      <origin rpy="0 0 0" xyz="0 0 -0.06425"/>
-      <inertia ixx="13.235" ixy="0" ixz="0" iyy="13.235" iyz="0" izz="9.655"/>
+      <mass value="9.9"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="17.71" ixy="0.209" ixz="-0.001" iyy="464.8" iyz="0" izz="467.7"/>
     </inertial>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 -0.06425"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 -0.06425"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link4.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Grey"/>
+      <material name="LightGreen"/>
     </visual>
   </link>
   <joint name="q5" type="revolute">
-    <axis xyz="0 0 1"/>
+    <axis xyz="0 1 0"/>
     <limit effort="1000" lower="-3.14" upper="3.14" velocity="0.5"/>
-    <origin rpy="0 -1.5708 1.5708" xyz="0 -0.531 0.1565"/>
+    <origin rpy="0 0 0" xyz=" 0.531 -0.011475 0"/>
     <parent link="link04"/>
     <child link="link05"/>
   </joint>
@@ -237,9 +240,9 @@
   </transmission>
   <link name="link05">
     <inertial>
-      <mass value="157.633"/>
+      <mass value="2.38"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertia ixx="13.235" ixy="0" ixz="0" iyy="13.235" iyz="0" izz="9.655"/>
+      <inertia ixx="5.613" ixy="-0.8" ixz="0" iyy="6.205" iyz="0" izz="8.616"/>
     </inertial>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -252,13 +255,13 @@
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Orange"/>
+      <material name="LightGreen"/>
     </visual>
   </link>
   <joint name="q6" type="revolute">
-    <axis xyz="0 0 1"/>
+    <axis xyz="1 0 0"/>
     <limit effort="1000" lower="-3.14" upper="3.14" velocity="0.5"/>
-    <origin rpy="1.5708 -1.5708 0" xyz="0 -0.1605 0"/>
+    <origin rpy="0 0 0" xyz="0.0985 0.1 0"/>
     <parent link="link05"/>
     <child link="link06"/>
   </joint>
@@ -274,28 +277,28 @@
   </transmission>
   <link name="link06">
     <inertial>
-      <mass value="157.633"/>
-      <origin rpy="0 0 0" xyz="0 0 -0.0605"/>
-      <inertia ixx="13.235" ixy="0" ixz="0" iyy="13.235" iyz="0" izz="9.655"/>
+      <mass value="1.75"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="2.865" ixy="0.01" ixz="0" iyy="2.792" iyz="0" izz="3.318"/>
     </inertial>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 -0.0605"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 -0.0605"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link6.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Grey"/>
+      <material name="LightGreen"/>
     </visual>
   </link>
   <joint name="q7" type="revolute">
-    <axis xyz="0 0 1"/>
+    <axis xyz="0 1 0"/>
     <limit effort="1000" lower="-3.14" upper="3.14" velocity="0.5"/>
-    <origin rpy="-1.5708 0 0" xyz="0 0 0"/>
+    <origin rpy="0 0 0" xyz="0.0605 0.057 0"/>
     <parent link="link06"/>
     <child link="link07"/>
   </joint>
@@ -311,28 +314,28 @@
   </transmission>
   <link name="link07">
     <inertial>
-      <mass value="157.633"/>
-      <origin rpy="0 0 0" xyz="0 0 0.088"/>
-      <inertia ixx="13.235" ixy="0" ixz="0" iyy="13.235" iyz="0" izz="9.655"/>
+      <mass value="0.37"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.2773" ixy="0" ixz="0" iyy="0.493" iyz="0" izz="0.2773"/>
     </inertial>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0.088"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link7.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 0.088"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link7.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Orange"/>
+      <material name="Grey"/>
     </visual>
   </link>
   <joint name="q8" type="prismatic">
-    <axis xyz="0 0 1"/>
-    <limit effort="1000" lower="-0.08" upper="0.08" velocity="0.5"/>
-    <origin rpy="0 -1.5708 0" xyz="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1000" lower="0" upper="0.1" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 -0.09 0"/>
     <parent link="link07"/>
     <child link="linkef"/>
   </joint>
@@ -348,22 +351,22 @@
   </transmission>
   <link name="linkef">
     <inertial>
-      <mass value="157.633"/>
-      <origin rpy="0 0 0" xyz="0 0 -0.15"/>
-      <inertia ixx="13.235" ixy="0" ixz="0" iyy="13.235" iyz="0" izz="9.655"/>
+      <mass value="1.69"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="16.89" ixy="0" ixz="0" iyy="0.5042" iyz="-0.28" izz="16.89"/>
     </inertial>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 -0.15"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link_EF.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 -0.15"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://kuka_kr20_description/meshes/Link_EF.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Black"/>
+      <material name="Grey"/>
     </visual>
   </link>
 </robot>

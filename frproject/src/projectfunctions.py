@@ -8,9 +8,9 @@ sin = np.sin
 pi = np.pi
 
 def limitJoints(q):
-    q[1] = max(min(q[1], 0.5), 0.13)
+    q[1] = max(min(q[1], 0.216), -0.192)
     q[2] = max(min(q[2], 2.15), -2.15)
-    q[7] = max(min(q[7], 0.15), -0.08)
+    q[7] = max(min(q[7], 0.1), 0)
 
 
 def dh(d, theta, a, alpha):
@@ -30,7 +30,6 @@ def dh(d, theta, a, alpha):
                   [0.0,     0.0,     0.0,   1.0]])
     return T
 
-
 def fkine_elbry420(q):
     """
     Calcular la cinematica directa del robot dados sus valores articulares. 
@@ -41,14 +40,14 @@ def fkine_elbry420(q):
 
     # Matrices DH (completar)
     #print(q)
-    T1 = dh(1.08725, q[0]+np.pi/2, 0, np.pi/2)
-    T2 = dh(q[1]+0.2835, np.pi, 0.115, 0)
+    T1 = dh(1.73725, q[0]+np.pi, 0, np.pi/2)
+    T2 = dh(q[1]+0.5745, np.pi, 0.115, 0)
     T3 = dh(-0.13225, q[2], 0.656, 0)
     T4 = dh(0.1565, q[3], 0.531, 0)
     T5 = dh(0, q[4]+np.pi/2, 0, np.pi/2)
     T6 = dh(0.1605, q[5]+np.pi, 0, np.pi/2)
     T7 = dh(0, q[6], 0, 0)
-    T8 = dh(q[7]+0.525, 0, 0, 0)
+    T8 = dh(q[7]+0.4777, 0, 0, 0)
     # Efector final con respecto a la base
     T = T1 @ T2 @ T3 @ T4 @ T5 @ T6 @ T7 @ T8 
     return T

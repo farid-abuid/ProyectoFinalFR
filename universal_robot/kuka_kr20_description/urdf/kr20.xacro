@@ -18,10 +18,10 @@
 
   <xacro:m_link_mesh name="${link_00_name}" color="White"
               origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="157.633"
-              ixx="13.235" ixy="0" ixz="0"
-              iyy="13.235" iyz="0"
-              izz="9.655"
+              mass="414.0"
+              ixx="97670000" ixy="0" ixz="0"
+              iyy="97670000" iyz="0"
+              izz="2170000"
               meshfile="package://kuka_kr20_description/meshes/base_link.stl"
               meshscale="0.001 0.001 0.001" />
 
@@ -88,10 +88,10 @@
 
   <xacro:m_link_mesh name="${link_01_name}" color="Grey"
               origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="157.633"
-              ixx="13.235" ixy="0" ixz="0"
-              iyy="13.235" iyz="0"
-              izz="9.655"
+              mass="24.74"
+              ixx="1430" ixy="84.25" ixz="0.2969"
+              iyy="82.08" iyz="-1.64"
+              izz="1405"
               meshfile="package://kuka_kr20_description/meshes/Link1.stl"
               meshscale="0.001 0.001 0.001" />
 
@@ -103,10 +103,10 @@
 
   <xacro:m_link_mesh name="${link_02_name}" color="DarkGreen"
               origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="157.633"
-              ixx="13.235" ixy="0" ixz="0"
-              iyy="13.235" iyz="0"
-              izz="9.655"
+              mass="10.88"
+              ixx="67.73" ixy="1.2" ixz="0.184"
+              iyy="59.85" iyz="-0.005"
+              izz="83.55"
               meshfile="package://kuka_kr20_description/meshes/Link2.stl"
               meshscale="0.001 0.001 0.001" />
 
@@ -118,10 +118,10 @@
 
   <xacro:m_link_mesh name="${link_03_name}" color="LightGreen"
               origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="157.633"
-              ixx="13.235" ixy="0" ixz="0"
-              iyy="13.235" iyz="0"
-              izz="9.655"
+              mass="19.26"
+              ixx="56.06" ixy="-4.0" ixz="0"
+              iyy="1396.0" iyz="0"
+              izz="1404.0"
               meshfile="package://kuka_kr20_description/meshes/Link3.stl"
               meshscale="0.001 0.001 0.001" />
               
@@ -133,10 +133,10 @@
 
   <xacro:m_link_mesh name="${link_04_name}" color="LightGreen"
               origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="157.633"
-              ixx="13.235" ixy="0" ixz="0"
-              iyy="13.235" iyz="0"
-              izz="9.655"
+              mass="9.9"
+              ixx="17.71" ixy="0.209" ixz="-0.001"
+              iyy="464.8" iyz="0"
+              izz="467.7"
               meshfile="package://kuka_kr20_description/meshes/Link4.stl"
               meshscale="0.001 0.001 0.001" />
 
@@ -148,10 +148,10 @@
 
   <xacro:m_link_mesh name="${link_05_name}" color="LightGreen"
               origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="157.633"
-              ixx="13.235" ixy="0" ixz="0"
-              iyy="13.235" iyz="0"
-              izz="9.655"
+              mass="2.38"
+              ixx="5.613" ixy="-0.8" ixz="0"
+              iyy="6.205" iyz="0"
+              izz="8.616"
               meshfile="package://kuka_kr20_description/meshes/Link5.stl"
               meshscale="0.001 0.001 0.001" />
 
@@ -163,10 +163,10 @@
 
   <xacro:m_link_mesh name="${link_06_name}" color="LightGreen"
               origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="157.633"
-              ixx="13.235" ixy="0" ixz="0"
-              iyy="13.235" iyz="0"
-              izz="9.655"
+              mass="1.75"
+              ixx="2.865" ixy="0.01" ixz="0"
+              iyy="2.792" iyz="0"
+              izz="3.318"
               meshfile="package://kuka_kr20_description/meshes/Link6.stl"
               meshscale="0.001 0.001 0.001" />
 
@@ -178,25 +178,25 @@
 
   <xacro:m_link_mesh name="${link_07_name}" color="Grey"
               origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="157.633"
-              ixx="13.235" ixy="0" ixz="0"
-              iyy="13.235" iyz="0"
-              izz="9.655"
+              mass="0.37"
+              ixx="0.2773" ixy="0" ixz="0"
+              iyy="0.493" iyz="0"
+              izz="0.2773"
               meshfile="package://kuka_kr20_description/meshes/Link7.stl"
               meshscale="0.001 0.001 0.001" />
 
    <xacro:m_joint name="q8" type="prismatic"
            axis_xyz="0 1 0"
-           origin_rpy="0 0 0" origin_xyz="0 -0.092 0"
+           origin_rpy="0 0 0" origin_xyz="0 -0.09 0"
            parent="${link_07_name}" child="${link_08_name}"
            limit_e="1000" limit_l="0" limit_u="0.1" limit_v="0.5" />
 
   <xacro:m_link_mesh name="${link_08_name}" color="Grey"
               origin_rpy="0 0 0" origin_xyz="0 0 0"
-              mass="157.633"
-              ixx="13.235" ixy="0" ixz="0"
-              iyy="13.235" iyz="0"
-              izz="9.655"
+              mass="1.69"
+              ixx="16.89" ixy="0" ixz="0"
+              iyy="0.5042" iyz="-0.28"
+              izz="16.89"
               meshfile="package://kuka_kr20_description/meshes/Link_EF.stl"
               meshscale="0.001 0.001 0.001" />
 
