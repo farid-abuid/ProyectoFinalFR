@@ -36,8 +36,10 @@ if __name__ == '__main__':
   q = np.array([0.0, -0.15, 1.7, -2.2, -1.6, 0.0, 0.01, 0.05])
   # Velocidad inicial
   dq = np.array([0., 0., 0., 0., 0., 0., 0., 0.])
-  # Configuracion articular deseada
-  qdes = np.array([1.0, 0.18, 1.0, 1.3, -1.5, 1.0, 2.0, 0.08])
+  # Posición deseada
+  xdes = np.array([0.8, 1, 0.8])
+  
+  qdes = ikine_newton_elbry420(xdes, q)
   # =============================================================
  
   # Posicion resultante de la configuracion articular deseada
@@ -60,10 +62,11 @@ if __name__ == '__main__':
 
   # Se definen las ganancias del controlador, diagonales
   #Kp = 2
-  Kp = 7*np.diag(np.array([50, 10, 300, 100, 200, 10, 1, 500]))
+  #Kp = 7*np.diag(np.array([50, 10, 300, 100, 200, 10, 1, 500]))
+  Kp = 20*np.diag(np.array([50, 80, 50]))
  
   #Kd = 2
-  Kd = 25*np.diag(np.array([50, 10, 200, 50, 70, 10, 1, 20]))
+  Kd = 50*np.diag(np.array([100, 100, 100]))
  
   # Arrays numpy
   zeros = np.zeros(ndof)          # Vector de ceros
@@ -76,6 +79,8 @@ if __name__ == '__main__':
   i = 0
   # Bucle de ejecucion continua
   t = 0.0
+  xold = fkine_elbry420(q)[0:3,3] 
+  
   while not rospy.is_shutdown():
     i+=1
     #print(i)
@@ -85,6 +90,8 @@ if __name__ == '__main__':
     # Posicion actual del efector final
     limitJoints(q)   
     x = fkine_elbry420(q)[0:3,3]
+    dx = (x-xold)/dt
+    xold = x
     # Tiempo actual (necesario como indicador para ROS)
     jstate.header.stamp = rospy.Time.now()
 
@@ -98,11 +105,12 @@ if __name__ == '__main__':
     # Control dinamico (COMPLETAR)
     # ----------------------------
 
-    rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
+    #rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
     g = np.zeros(ndof)
-    u = g + Kp.dot(np.subtract(qdes, q)) - Kd.dot(dq)  # Reemplazar por la ley de control
+    Ja = jacobian_position(q)
+    u = Ja.T @ (Kp.dot(np.subtract(xdes, x)) - Kd.dot(dx))  # Reemplazar por la ley de control
     print(u)
-   
+  
     # Simulacion del robot
     robot.send_command(u)
 

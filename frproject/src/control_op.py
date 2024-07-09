@@ -36,8 +36,10 @@ if __name__ == '__main__':
   q = np.array([0.0, -0.15, 1.7, -2.2, -1.6, 0.0, 0.01, 0.05])
   # Velocidad inicial
   dq = np.array([0., 0., 0., 0., 0., 0., 0., 0.])
-  # Configuracion articular deseada
-  qdes = np.array([1.0, 0.18, 1.0, 1.3, -1.5, 1.0, 2.0, 0.08])
+  # Posición deseada
+  xdes = np.array([0.8, 1.2, 0.8])
+  
+  qdes = ikine_newton_elbry420(xdes, q)
   # =============================================================
  
   # Posicion resultante de la configuracion articular deseada
@@ -60,10 +62,11 @@ if __name__ == '__main__':
 
   # Se definen las ganancias del controlador, diagonales
   #Kp = 2
-  Kp = 7*np.diag(np.array([50, 10, 300, 100, 200, 10, 1, 500]))
+  #Kp = 7*np.diag(np.array([50, 10, 300, 100, 200, 10, 1, 500]))
+  Kp = 70*np.diag(np.array([50, 250, 150]))
  
   #Kd = 2
-  Kd = 25*np.diag(np.array([50, 10, 200, 50, 70, 10, 1, 20]))
+  Kd = 20*np.diag(np.array([100, 100, 10, 10, 10, 100, 10, 20]))
  
   # Arrays numpy
   zeros = np.zeros(ndof)          # Vector de ceros
@@ -98,9 +101,10 @@ if __name__ == '__main__':
     # Control dinamico (COMPLETAR)
     # ----------------------------
 
-    rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
+    #rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
     g = np.zeros(ndof)
-    u = g + Kp.dot(np.subtract(qdes, q)) - Kd.dot(dq)  # Reemplazar por la ley de control
+    Ja = jacobian_position(q)
+    u = Ja.T @ Kp.dot(np.subtract(xdes, x)) - Kd.dot(dq)  # Reemplazar por la ley de control
     print(u)
    
     # Simulacion del robot

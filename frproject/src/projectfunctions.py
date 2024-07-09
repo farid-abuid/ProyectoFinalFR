@@ -97,7 +97,7 @@ def ikine_gradient_elbry420(xdes, q0):
     epsilon  = 0.001
     max_iter = 1000
     delta    = 0.00001
-    alfa = 0.2
+    alfa = 0.5
     q  = copy(q0)
     #Almacenamiento del error
     ee = []
@@ -150,7 +150,7 @@ def jacobian_position(q, delta=0.0001):
         T_inc = fkine_elbry420(dq)
         # Aproximacion del Jacobiano de posicion usando diferencias finitas
         if (i==1 or i==7):
-            J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])*(0.05)/delta
+            J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])*(0.01)/delta
         else:
             J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])/delta
 	

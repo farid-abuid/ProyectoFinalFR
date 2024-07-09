@@ -17,10 +17,9 @@ if __name__ == '__main__':
     # Publisher: publish to the joint_states topic
     pub = rospy.Publisher('joint_states', JointState, queue_size=10)
     # Files for the logs
-    fxcurrent = open("/tmp/xcurrent.txt", "w")                
-    fxdesired = open("/tmp/xdesired.txt", "w")
-    fq = open("/tmp/q.txt", "w")
-
+    fqact = open("/tmp/qactual.txt", "w")
+    fxact = open("/tmp/xactual.txt", "w")
+    fxdes = open("/tmp/xdeseado.txt", "w")
     # Markers for the current and desired positions
     bmarker_current  = BallMarker(color['RED'])
     bmarker_desired = BallMarker(color['GREEN'])
@@ -29,7 +28,7 @@ if __name__ == '__main__':
     jnames = ['q1','q2','q3','q4','q5','q6','q7','q8']
 
     # Desired position
-    xd = np.array([0.6, 0.6, 0.5])
+    xdes = np.array([0.6, 0.6, 0.5])
     # Initial configuration
     q0 = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
@@ -40,7 +39,7 @@ if __name__ == '__main__':
     # Red marker shows the achieved position
     bmarker_current.xyz(x0)
     # Green marker shows the desired position
-    bmarker_desired.xyz(xd)
+    bmarker_desired.xyz(xdes)
 
     # Instance of the JointState message
     jstate = JointState()
@@ -55,6 +54,7 @@ if __name__ == '__main__':
     dt = 1.0/freq
     rate = rospy.Rate(freq)
 
+    t = 0.0
     # Initial joint configuration
     q = copy(q0)
     # Main loop
@@ -63,11 +63,11 @@ if __name__ == '__main__':
         jstate.header.stamp = rospy.Time.now()
         # Kinematic control law for position (complete here)
         # -----------------------------
-        #error = (x-xd)
+        #error = (x-xdes)
         x = fkine_elbry420(q)[0:3,3]
         
         
-        e = np.subtract(x.T,xd)
+        e = np.subtract(x.T,xdes)
         k = 0.5
         edot = np.dot(-k, e)
         #edot = edot.reshape(1, -1)
@@ -83,84 +83,142 @@ if __name__ == '__main__':
         # -----------------------------
 
         
-        # Log values                                                      
-        fxcurrent.write(str(x[0])+' '+str(x[1]) +' '+str(x[2])+'\n')
-        fxdesired.write(str(xd[0])+' '+str(xd[1])+' '+str(xd[2])+'\n')
-        fq.write(str(q[0])+" "+str(q[1])+" "+str(q[2])+" "+str(q[3])+" "+
-                 str(q[4])+" "+str(q[5])+" "+str(q[6])+" "+str(q[7])+"\n")
+        # Almacenamiento de datos
+        fxact.write(str(t)+' '+str(x[0])+' '+str(x[1])+' '+str(x[2])+'\n')
+        fxdes.write(str(t)+' '+str(xdes[0])+' '+str(xdes[1])+' '+str(xdes[2])+'\n')
+        fqact.write(str(t)+' '+str(q[0])+' '+str(q[1])+' '+ str(q[2])+' '+ str(q[3])+' '+str(q[4])+' '+str(q[5])+' '+str(q[6])+' '+str(q[7])+'\n ')
+
+
         
         # Publish the message
         jstate.position = q
         pub.publish(jstate)
-        bmarker_desired.xyz(xd)
+        bmarker_desired.xyz(xdes)
         bmarker_current.xyz(x)
+        t = t+dt
         # Wait for the next iteration
         rate.sleep()
 
     print('ending motion ...')
-    fxcurrent.close()
-    fxdesired.close()
-    fq.close()
-    
+    fqact.close()
+
+    fxact.close()
+    fxdes.close()
+
+#--------------------------------------------------------------------------------------------------  
     # Read data from log files
-    xcurrent_data = np.loadtxt("/tmp/xcurrent.txt")
-    xdesired_data = np.loadtxt("/tmp/xdesired.txt")
-    q_data = np.loadtxt("/tmp/q.txt")
+    qcurrent_data = np.loadtxt("/tmp/qactual.txt")
 
     # Generate time vector assuming constant time step
-    num_samples = xcurrent_data.shape[0]
+    num_samples = qcurrent_data.shape[0]
     time = np.linspace(0, num_samples / freq, num_samples)
 
     # Plot position as function of time
     plt.figure(figsize=(10, 8))
 
+    plt.subplot(3, 3, 1)
+    plt.plot(time, qcurrent_data[:, 1], label='Actual')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Angle [rad]')
+    plt.legend()
+    plt.title('q1 vs t')
+
+    plt.subplot(3, 3, 2)
+    plt.plot(time, qcurrent_data[:, 2], label='Actual')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Angle [rad]')
+    plt.legend()
+    plt.title('q2 vs t')
+
+    plt.subplot(3, 3, 3)
+    plt.plot(time, qcurrent_data[:, 3], label='Actual')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Angle [rad]')
+    plt.legend()
+    plt.title('q3 vs t')
+ 
+    plt.subplot(3, 3, 4)
+    plt.plot(time, qcurrent_data[:, 4], label='Actual')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Angle [rad]')
+    plt.legend()
+    plt.title('q4 vs t')
+   
+    plt.subplot(3, 3, 5)
+    plt.plot(time, qcurrent_data[:, 5], label='Actual')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Angle [rad]')
+    plt.legend()
+    plt.title('q5 vs t')    
+ 
+    plt.subplot(3, 3, 6)
+    plt.plot(time, qcurrent_data[:, 6], label='Actual')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Angle [rad]')
+    plt.legend()
+    plt.title('q6 vs t')
+  
+    plt.subplot(3, 3, 7)
+    plt.plot(time, qcurrent_data[:, 7], label='Actual')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Angle [rad]')
+    plt.legend()
+    plt.title('q7 vs t')
+
+    plt.subplot(3, 3, 8)
+    plt.plot(time, qcurrent_data[:, 8], label='Actual')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Angle [rad]')
+    plt.legend()
+    plt.title('q8 vs t')
+
+    plt.tight_layout()
+  #plt.show()
+#----------------------------------------------------------------------------------------
+  # Read data from log files
+    xcurrent_data = np.loadtxt("/tmp/xactual.txt")
+    xdesired_data = np.loadtxt("/tmp/xdeseado.txt")
+    # Generate time vector assuming constant time step
+    num_samples = xcurrent_data.shape[0]
+    time = np.linspace(0, num_samples / freq, num_samples)
+
+  # Plot position as function of time
+    plt.figure(figsize=(10, 8))
+
     plt.subplot(3, 1, 1)
-    plt.plot(time, xcurrent_data[:, 0], label='Actual X')
-    plt.plot(time, xdesired_data[:, 0], label='Desired X', linestyle='--')
+    plt.plot(time, xcurrent_data[:, 1], label='Actual X')
+    plt.plot(time, xdesired_data[:, 1], label='Desired X', linestyle='--')
     plt.xlabel('Time [s]')
     plt.ylabel('X Position [m]')
     plt.legend()
 
     plt.subplot(3, 1, 2)
-    plt.plot(time, xcurrent_data[:, 1], label='Actual Y')
-    plt.plot(time, xdesired_data[:, 1], label='Desired Y', linestyle='--')
+    plt.plot(time, xcurrent_data[:, 2], label='Actual Y')
+    plt.plot(time, xdesired_data[:, 2], label='Desired Y', linestyle='--')
     plt.xlabel('Time [s]')
     plt.ylabel('Y Position [m]')
     plt.legend()
 
     plt.subplot(3, 1, 3)
-    plt.plot(time, xcurrent_data[:, 2], label='Actual Z')
-    plt.plot(time, xdesired_data[:, 2], label='Desired Z', linestyle='--')
+    plt.plot(time, xcurrent_data[:, 3], label='Actual Z')
+    plt.plot(time, xdesired_data[:, 3], label='Desired Z', linestyle='--')
     plt.xlabel('Time [s]')
     plt.ylabel('Z Position [m]')
     plt.legend()
 
     plt.tight_layout()
-    
-    # Plot articular position qn
-    n = 8
-    plt.figure(figsize=(10, 8))
-    plt.plot(time, q_data[:, n-1], label=(f"q{n} position"))
-    plt.xlabel('Time [s]')
-    plt.ylabel(f"q{n} position [rad]")
-    plt.legend()
-        
     plt.show()
-
-    # Plot position in Cartesian space
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    ax.plot(xcurrent_data[:, 0], xcurrent_data[:, 1], xcurrent_data[:, 2], label='End Effector Path')
-    # Plot a single dot at the last position in xcurrent_data
-    ax.scatter(xcurrent_data[-1, 0], xcurrent_data[-1, 1], xcurrent_data[-1, 2], color='red', s=100,  label='End Position')
-    
-    ax.scatter(xcurrent_data[0, 0], xcurrent_data[0, 1], xcurrent_data[0, 2], color='green', s=100,  label='Start Position')
-    
-    ax.set_xlabel('X [m]')
-    ax.set_ylabel('Y [m]')
-    ax.set_zlabel('Z [m]')
-    ax.legend()
-
-    plt.show()
-
-    
+'''
+ # Plot position in Cartesian space
+  fig = plt.figure()
+  ax = fig.gca(projection='3d')
+  ax.plot(xcurrent_data[:, 0], xcurrent_data[:, 1], xcurrent_data[:, 2], label='End Effector Path')
+  # Plot a single dot at the last position in xcurrent_data
+  ax.scatter(xcurrent_data[-1, 0], xcurrent_data[-1, 1], xcurrent_data[-1, 2], color='red', s=100,  label='End Position')
+  ax.scatter(xcurrent_data[0, 0], xcurrent_data[0, 1], xcurrent_data[0, 2], color='green', s=100,  label='Start Position')
+  ax.set_xlabel('X [m]')
+  ax.set_ylabel('Y [m]')
+  ax.set_zlabel('Z [m]')
+  ax.legend()
+  plt.show()
+  '''
