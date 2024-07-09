@@ -105,7 +105,7 @@ if __name__ == '__main__':
     
     #g = np.zeros(ndof)
     Ja = jacobian_position(q)
-    u = Ja.T @ Kp.dot(np.subtract(xdes, x)) - Kd.dot(dq)  # Reemplazar por la ley de control
+    u =g+ Ja.T @ Kp.dot(np.subtract(xdes, x)) - Kd.dot(dq)  # Reemplazar por la ley de control
     print(u)
    
     # Simulacion del robot
