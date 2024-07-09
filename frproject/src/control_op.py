@@ -66,7 +66,7 @@ if __name__ == '__main__':
   Kp = 70*np.diag(np.array([50, 250, 150]))
  
   #Kd = 2
-  Kd = 20*np.diag(np.array([100, 100, 10, 10, 10, 100, 10, 20]))
+  Kd = 30*np.diag(np.array([100, 100, 10, 10, 10, 100, 10, 20]))
  
   # Arrays numpy
   zeros = np.zeros(ndof)          # Vector de ceros
@@ -75,7 +75,8 @@ if __name__ == '__main__':
   c     = np.zeros(ndof)          # Para el vector de Coriolis+centrifuga
   M     = np.zeros([ndof, ndof])  # Para la matriz de inercia
   e     = np.eye(ndof)               # Vector identidad
-
+  
+  rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
   i = 0
   # Bucle de ejecucion continua
   t = 0.0
@@ -101,8 +102,8 @@ if __name__ == '__main__':
     # Control dinamico (COMPLETAR)
     # ----------------------------
 
-    #rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
-    g = np.zeros(ndof)
+    
+    #g = np.zeros(ndof)
     Ja = jacobian_position(q)
     u = Ja.T @ Kp.dot(np.subtract(xdes, x)) - Kd.dot(dq)  # Reemplazar por la ley de control
     print(u)

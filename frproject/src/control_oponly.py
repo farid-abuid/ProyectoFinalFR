@@ -30,28 +30,28 @@ if __name__ == '__main__':
   # Valores del mensaje
   jstate.header.stamp = rospy.Time.now()
   jstate.name = jnames
- 
+  
   # =============================================================
   # Configuracion articular inicial (en radianes)
   q = np.array([0.0, -0.15, 1.7, -2.2, -1.6, 0.0, 0.01, 0.05])
   # Velocidad inicial
   dq = np.array([0., 0., 0., 0., 0., 0., 0., 0.])
   # Posición deseada
-  xdes = np.array([0.8, 1, 0.8])
+  xdes = np.array([1.2,0.8, 1])
   
   qdes = ikine_newton_elbry420(xdes, q)
   # =============================================================
- 
+    
   # Posicion resultante de la configuracion articular deseada
   xdes = fkine_elbry420(qdes)[0:3,3]
   # Copiar la configuracion articular en el mensaje a ser publicado
   jstate.position = q
   pub.publish(jstate)
- 
+   
   # Modelo RBDL
   modelo = rbdl.loadModel('/home/farid/project_ws/src/universal_robot/kuka_kr20_description/urdf/kr20.urdf')
   ndof = modelo.q_size     # Grados de libertad
- 
+  
   # Frecuencia del envio (en Hz)
   freq = 200
   dt = 1.0/freq
@@ -63,10 +63,10 @@ if __name__ == '__main__':
   # Se definen las ganancias del controlador, diagonales
   #Kp = 2
   #Kp = 7*np.diag(np.array([50, 10, 300, 100, 200, 10, 1, 500]))
-  Kp = 20*np.diag(np.array([50, 80, 50]))
+  Kp = 15*np.diag(np.array([60, 100, 60]))
  
   #Kd = 2
-  Kd = 50*np.diag(np.array([100, 100, 100]))
+  Kd = 120*np.diag(np.array([100, 120, 100]))
  
   # Arrays numpy
   zeros = np.zeros(ndof)          # Vector de ceros
@@ -80,7 +80,7 @@ if __name__ == '__main__':
   # Bucle de ejecucion continua
   t = 0.0
   xold = fkine_elbry420(q)[0:3,3] 
-  
+  rbdl.InverseDynamics(modelo, q, zeros, zeros, g)  
   while not rospy.is_shutdown():
     i+=1
     #print(i)
@@ -105,10 +105,9 @@ if __name__ == '__main__':
     # Control dinamico (COMPLETAR)
     # ----------------------------
 
-    #rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
-    g = np.zeros(ndof)
+    #g = np.zeros(ndof)
     Ja = jacobian_position(q)
-    u = Ja.T @ (Kp.dot(np.subtract(xdes, x)) - Kd.dot(dx))  # Reemplazar por la ley de control
+    u = g + Ja.T @ (Kp.dot(np.subtract(xdes, x)) - Kd.dot(dx))  # Reemplazar por la ley de control
     print(u)
   
     # Simulacion del robot

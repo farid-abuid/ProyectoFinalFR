@@ -73,6 +73,7 @@ if __name__ == '__main__':
   M     = np.zeros([ndof, ndof])  # Para la matriz de inercia
   e     = np.eye(ndof)               # Vector identidad
 
+  rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
   i = 0
   # Bucle de ejecucion continua
   t = 0.0
@@ -99,7 +100,7 @@ if __name__ == '__main__':
     # ----------------------------
 
     rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
-    g = np.zeros(ndof)
+    #g = np.zeros(ndof)
     u = g + Kp.dot(np.subtract(qdes, q)) - Kd.dot(dq)  # Reemplazar por la ley de control
     print(u)
    
