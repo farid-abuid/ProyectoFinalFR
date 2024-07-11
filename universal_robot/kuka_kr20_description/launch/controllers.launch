@@ -7,8 +7,7 @@
   <!-- Joint Controllers -->
   <node name="kr2_controller_spawner" pkg="controller_manager" type="spawner"
         respawn="false" output="screen" ns="/kr20"
-        args="kr20_joint_controller
-              gripper_controller"/>
+        args="kr20_joint_controller"/>
         
   <!--node name="rqt_publisher" pkg="rqt_publisher" type="rqt_publisher" /-->
 
