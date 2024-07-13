@@ -8,6 +8,10 @@ sin = np.sin
 pi = np.pi
 
 def limitJoints(q):
+    """
+    Definimos una funcion para limitar los joints de revolucion y prismaticos
+    que tienen limites fisicos y de colision
+    """
     q[1] = max(min(q[1], 0.216), -0.192)
     q[2] = max(min(q[2], 2.15), -2.15)
     q[7] = max(min(q[7], 0.1), 0)
@@ -16,9 +20,7 @@ def limitJoints(q):
 def dh(d, theta, a, alpha):
     """
     Calcular la matriz de transformacion homogenea asociada con los parametros
-    de Denavit-Hartenberg.
-    Los valores d, theta, a, alpha son escalares.
-
+    de Denavit-Hartenberg. Los valores d, theta, a, alpha son escalares.
     """
     sth = np.sin(theta)
     cth = np.cos(theta)
@@ -32,14 +34,10 @@ def dh(d, theta, a, alpha):
 
 def fkine_elbry420(q):
     """
-    Calcular la cinematica directa del robot dados sus valores articulares. 
+    Calcula la cinematica directa del robot dados sus valores articulares. 
     q es un vector numpy de la forma [q1, q2, q3, q4, q5, q6, q7, q8]
 
     """
-    # Longitudes (en metros)
-
-    # Matrices DH (completar)
-    #print(q)
     T1 = dh(1.73725, q[0]+np.pi, 0, np.pi/2)
     T2 = dh(q[1]+0.5745, np.pi, 0.115, 0)
     T3 = dh(-0.13225, q[2], 0.656, 0)
@@ -55,7 +53,7 @@ def fkine_elbry420(q):
 def ikine_newton_elbry420(xdes, q0):
     """
     Calcular la cinematica inversa de numericamente a partir de la configuracion articular inicial de q0.
-    Emplear el metodo de newton
+    Metodo de newton
     """
     epsilon  = 0.001
     max_iter = 1000
@@ -92,7 +90,7 @@ def ikine_newton_elbry420(xdes, q0):
 def ikine_gradient_elbry420(xdes, q0):
     """
     Calcular la cinematica inversa numericamente a partir de la configuracion articular inicial de q0.
-    Emplear el metodo gradiente
+    Metodo gradiente
     """
     epsilon  = 0.001
     max_iter = 1000
@@ -131,7 +129,7 @@ def ikine_gradient_elbry420(xdes, q0):
 def jacobian_position(q, delta=0.0001):
     """
     Jacobiano analitico para la posicion. Retorna una matriz de 3x6 y toma como
-    entrada el vector de configuracion articular q=[q1, q2, q3, q4, q5, q6]
+    entrada el vector de configuracion articular q=[q1, q2, q3, q4, q5, q6, q7, q8]
 
     """
     # Alocacion de memoria
@@ -157,37 +155,6 @@ def jacobian_position(q, delta=0.0001):
     return J
 
 
-
-'''
-def jacobian_pose(q, delta=0.0001):
-    """
-    Jacobiano analitico para la posicion y orientacion (usando un
-    cuaternion). Retorna una matriz de 7x8 y toma como entrada el vector de
-    configuracion articular q=[q1, q2, q3, q4, q5, q6, q7, q8]
-
-    """
-    J = np.zeros((7,8))
-    # Implementar este Jacobiano aqui
-    T = fkine_elbry420(q)
-    Q = rot2quat(T)
-    for i in range(8):
-    	dq = copy(q)
-    	T = fkine_elbry420(dq)
-    	Q = rot2quat(T)
-    	dq[i] = dq[i] + delta
-    	T_inc = fkine_elbry420(dq)
-    	Q_inc = rot2quat(T_inc)
-    	
-    	if (i==1 or i==7):
-            J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])*(0.05)/delta
-        else:
-            J[0:3,i]=(T_inc[0:3, 3]-T[0:3, 3])/delta
-        J[3:7,i]=(Q_inc[0:4]-Q[0:4]).T/delta
-    return J
-
-'''
-
-
 class Robot(object):
     def __init__(self, q0, dq0, ndof, dt):
         self.q = q0    # numpy array (ndof x 1)
@@ -195,7 +162,7 @@ class Robot(object):
         self.M = np.zeros([ndof, ndof])
         self.b = np.zeros(ndof)
         self.dt = dt
-        self.robot = rbdl.loadModel('/home/farid/project_ws/src/universal_robot/kuka_kr20_description/urdf/kr20.urdf')
+        self.robot = rbdl.loadModel('/home/iturrisoga3112/project_ws/src/universal_robot/kuka_kr20_description/urdf/kr20.urdf')
 
     def send_command(self, tau):
         rbdl.CompositeRigidBodyAlgorithm(self.robot, self.q, self.M)
@@ -242,23 +209,19 @@ def rot2quat(R):
 
 def TF2xyzquat(T):
     """
-    Convert a homogeneous transformation matrix into the a vector containing the
-    pose of the robot.
+    Convierte una matriz de transformacion homogenea a un vector que contiene la
+    orientacion del robot
 
-    Input:
-      T -- A homogeneous transformation
-    Output:
-      X -- A pose vector in the format [x y z ew ex ey ez], donde la first part
-           is Cartesian coordinates and the last part is a quaternion
+    Entrada:
+      T -- Una matriz de transformacion
+    Salida:
+      X -- Un vector de orientacion en el formato [x y z ew ex ey ez], donde la 
+      primera parte son coordenadas cartesianas y la ultima es un cuaternion 
     """
-    #print(T)
     quat = rot2quat(T[0:3,0:3])
     res = [T[0,3], T[1,3], T[2,3], quat[0], quat[1], quat[2], quat[3]] 
     
     return np.array(res)
-
-def sVectorFromSkew(S):
-    return sp.Matrix([S[2,1],S[0,2],S[1,0]])
 
 def skew(w):
     R = np.zeros([3,3])

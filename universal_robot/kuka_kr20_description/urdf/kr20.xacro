@@ -1,30 +1,32 @@
+<!-- Encabezado del archivo XML y declaracion del robot-->
 <?xml version="1.0" ?>
 <robot name="kr20" xmlns:xacro="http://www.ros.org/wiki/xacro">
   
-  <!-- BEGIN - Include -->
+  <!-- Incluye otros archivos XACRO que contienen parametros del robot y definiciones de eslabones y articulaciones.-->
   <xacro:include filename="$(find kuka_kr20_description)/urdf/robot_parameters.xacro" />
   <xacro:include filename="$(find kuka_kr20_description)/urdf/links_joints.xacro" />
-  <!-- END - Include -->
 
-  <!-- World frame (for Gazebo) -->
+  <!-- Definicion del marco mundial para Gazebo -->
   <link name="world"/>
 
-  <!-- Arm fixed to world frame  -->
+  <!-- Definicion de una articulacion fija entre el marco mundial y el primer eslabon del robot: -->
   <joint name="world__${link_00_name}" type="fixed">
     <parent link="world"/>
     <child link="${link_00_name}"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
 
+  <!-- Definición del eslabón fijo con su mesh y propiedades fisicas: -->
   <xacro:m_link_mesh name="${link_00_name}" color="White"
               origin_rpy="0 0 0" origin_xyz="0 0 0"
               mass="414.0"
               ixx="97670000" ixy="0" ixz="0"
-              iyy="97670000" iyz="0"
+              iyy="97670000" iyz="0"z
               izz="2170000"
               meshfile="package://kuka_kr20_description/meshes/base_link.stl"
               meshscale="0.001 0.001 0.001" />
 
+  <!-- Definición de colores de los eslabones para RViz: -->
   <material name="DarkGreen">
     <color rgba="0 0.36 0.012 1.0"/>
   </material>
@@ -77,13 +79,14 @@
     <material>Gazebo/Grey</material>
   </gazebo>
 
+  <!-- Plugin para el reconocimiento de gazebo_ros_control -->
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
       <robotNamespace>kr20</robotNamespace>
     </plugin>
-  </gazebo>
+  </gazebo>
 
-  <!-- BEGIN - Robot description -->
+  <!-- Descripcion del robot, tipos de articulaciones, orientacion y posicion de cada articulacion y eslabon respecto al anterior -->
 
   <xacro:m_joint name="q1" type="revolute"
            axis_xyz="0 0 1"

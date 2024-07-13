@@ -11,92 +11,86 @@ import time
 
 if __name__ == '__main__':
 
-    # Initialize the node
+    # Inicializa el nodo
     rospy.init_node("testKineControlPosition")
     print('starting motion ... ')
-    # Publisher: publish to the joint_states topic
+    # Publica al topico joint_states
     pub = rospy.Publisher('joint_states', JointState, queue_size=10)
-    # Files for the logs
+    # Archivos para guardar la data
     fqact = open("/tmp/qactual.txt", "w")
     fxact = open("/tmp/xactual.txt", "w")
     fxdes = open("/tmp/xdeseado.txt", "w")
-    # Markers for the current and desired positions
+    # Marker para posicion deseada y actual
     bmarker_current  = BallMarker(color['RED'])
     bmarker_desired = BallMarker(color['GREEN'])
 
-    # Joint names
+    # Nombres de las articulaciones
     jnames = ['q1','q2','q3','q4','q5','q6','q7','q8']
 
-    # Desired position
+    # Posicion deseada
     xdes = np.array([0.6, 0.6, 0.5])
-    # Initial configuration
+    # Configuracion articular inicial
     q0 = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
-    # Resulting initial position (end effector with respect to the base link)
+    # Posicion inicial resultante (efector final con respecto al link de la base)
     T = fkine_elbry420(q0)
     x0 = T[0:3,3]
 
-    # Red marker shows the achieved position
+    # Marker rojo muestra la posicion actual
     bmarker_current.xyz(x0)
-    # Green marker shows the desired position
+    # Marker verde muestra la posicion deseada
     bmarker_desired.xyz(xdes)
 
-    # Instance of the JointState message
+    # Instancia del mensaje JointState
     jstate = JointState()
-    # Values of the message
+    # Valor del mensaje
     jstate.header.stamp = rospy.Time.now()
     jstate.name = jnames
-    # Add the head joint value (with value 0) to the joints
+    # Asigna el valor a las articulaciones
     jstate.position = q0
 
-    # Frequency (in Hz) and control period 
+    # Frecuencia (en Hz) y periodo del control
     freq = 200
     dt = 1.0/freq
     rate = rospy.Rate(freq)
 
     t = 0.0
-    # Initial joint configuration
+    # Configuracion articular incial
     q = copy(q0)
     # Main loop
     while not rospy.is_shutdown():
-        # Current time (needed for ROS)
+        # Tiempo actual (necesario para ROS)
         jstate.header.stamp = rospy.Time.now()
-        # Kinematic control law for position (complete here)
+
+        # Ley de control cinematica para posicion
         # -----------------------------
         #error = (x-xdes)
         x = fkine_elbry420(q)[0:3,3]
-        
-        
         e = np.subtract(x.T,xdes)
         k = 0.5
         edot = np.dot(-k, e)
-        #edot = edot.reshape(1, -1)
 	
-	#Pseudoinversa de J
+	      #Pseudoinversa de J
         J = jacobian_position(q)
         Jpseudo = np.linalg.pinv(J)
-        #np.dot(np.linalg(np.dot(J.T, J)),J.T)
-	
+
         qdot = np.dot(Jpseudo, edot)
         q = q + np.dot(dt, qdot)
         limitJoints(q)
         # -----------------------------
 
-        
         # Almacenamiento de datos
         fxact.write(str(t)+' '+str(x[0])+' '+str(x[1])+' '+str(x[2])+'\n')
         fxdes.write(str(t)+' '+str(xdes[0])+' '+str(xdes[1])+' '+str(xdes[2])+'\n')
         fqact.write(str(t)+' '+str(q[0])+' '+str(q[1])+' '+ str(q[2])+' '+ str(q[3])+' '+str(q[4])+' '+str(q[5])+' '+str(q[6])+' '+str(q[7])+'\n ')
 
-
-        
-        # Publish the message
+        # Publica el mensaje
         jstate.position = q
         pub.publish(jstate)
         bmarker_desired.xyz(xdes)
         bmarker_current.xyz(x)
         t = t+dt
-        # Wait for the next iteration
+        # Espera a la siguiente iteración
         rate.sleep()
 
     print('ending motion ...')
@@ -106,14 +100,14 @@ if __name__ == '__main__':
     fxdes.close()
 
 #--------------------------------------------------------------------------------------------------  
-    # Read data from log files
+    # Leer data
     qcurrent_data = np.loadtxt("/tmp/qactual.txt")
 
-    # Generate time vector assuming constant time step
+    # Genera el vector tiempo
     num_samples = qcurrent_data.shape[0]
     time = np.linspace(0, num_samples / freq, num_samples)
 
-    # Plot position as function of time
+    # Plotea
     plt.figure(figsize=(10, 8))
 
     plt.subplot(3, 3, 1)
@@ -173,16 +167,15 @@ if __name__ == '__main__':
     plt.title('q8 vs t')
 
     plt.tight_layout()
-  #plt.show()
 #----------------------------------------------------------------------------------------
-  # Read data from log files
+  # Leer data
     xcurrent_data = np.loadtxt("/tmp/xactual.txt")
     xdesired_data = np.loadtxt("/tmp/xdeseado.txt")
-    # Generate time vector assuming constant time step
+    # Genera el vector tiempo
     num_samples = xcurrent_data.shape[0]
     time = np.linspace(0, num_samples / freq, num_samples)
 
-  # Plot position as function of time
+  # Plotea
     plt.figure(figsize=(10, 8))
 
     plt.subplot(3, 1, 1)
@@ -208,17 +201,4 @@ if __name__ == '__main__':
 
     plt.tight_layout()
     plt.show()
-'''
- # Plot position in Cartesian space
-  fig = plt.figure()
-  ax = fig.gca(projection='3d')
-  ax.plot(xcurrent_data[:, 0], xcurrent_data[:, 1], xcurrent_data[:, 2], label='End Effector Path')
-  # Plot a single dot at the last position in xcurrent_data
-  ax.scatter(xcurrent_data[-1, 0], xcurrent_data[-1, 1], xcurrent_data[-1, 2], color='red', s=100,  label='End Position')
-  ax.scatter(xcurrent_data[0, 0], xcurrent_data[0, 1], xcurrent_data[0, 2], color='green', s=100,  label='Start Position')
-  ax.set_xlabel('X [m]')
-  ax.set_ylabel('Y [m]')
-  ax.set_zlabel('Z [m]')
-  ax.legend()
-  plt.show()
-  '''
+

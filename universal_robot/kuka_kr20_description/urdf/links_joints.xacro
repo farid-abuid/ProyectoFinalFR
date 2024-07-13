@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
+<!-- Funcion para definir articulaciones-->
   <xacro:macro name="m_joint" params="name type axis_xyz origin_rpy origin_xyz parent child limit_e limit_l limit_u limit_v">
     <joint name="${name}" type="${type}">
       <axis xyz="${axis_xyz}" />
@@ -21,6 +21,7 @@
     </transmission>
   </xacro:macro>
 
+<!-- Funcion para definir eslabones-->
   <xacro:macro name="m_link_mesh" params="name color origin_xyz origin_rpy meshfile meshscale mass ixx ixy ixz iyy iyz izz">
     <link name="${name}">
       <inertial>

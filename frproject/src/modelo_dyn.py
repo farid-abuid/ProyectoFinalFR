@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 import rbdl
 import numpy as np
 
@@ -24,13 +23,13 @@ if __name__ == '__main__':
   g     = np.zeros(ndof)          # Para la gravedad
   c     = np.zeros(ndof)          # Para el vector de Coriolis+centrifuga
   M     = np.zeros([ndof, ndof])  # Para la matriz de inercia
-  e     = np.eye(ndof)               # Vector identidad
+  e     = np.eye(ndof)            # Vector identidad
   
   # Torque dada la configuracion del robot
   rbdl.InverseDynamics(modelo, q, dq, ddq, tau)
   
-  
-  # Parte 1: Calcular vector de gravedad, vector de Coriolis/centrifuga,
+
+  # Calculo del vector de gravedad, vector de Coriolis/centrifuga,
   # y matriz M usando solamente InverseDynamics
   
   # Calculo del vector de gravedad
@@ -50,32 +49,3 @@ if __name__ == '__main__':
     M[:, i] = tau - g
   
   print("Matriz de inercia M:\n", np.round(M, 3))
-
-
-  # Parte 2: Calcular M y los efectos no lineales b usando las funciones
-  # CompositeRigidBodyAlgorithm y NonlinearEffects. Almacenar los resultados
-  # en los arreglos llamados M2 y b2
-  b2 = np.zeros(ndof)          # Para efectos no lineales
-  M2 = np.zeros([ndof, ndof])  # Para matriz de inercia
-  
-  rbdl.CompositeRigidBodyAlgorithm(modelo, q, M2)
-  print("Matriz de inercia M2:\n", np.round(M2, 3))
-  
-  rbdl.NonlinearEffects(modelo, q, dq, b2)
-  print("Matriz b:\n", np.round(b2, 3)) 
-  
-  
-  # Parte 2: Verificacion de valores
-
-  
-  
-
-  # Parte 3: Verificacion de la expresion de la dinamicap
-  rbdl.InverseDynamics(modelo, q, dq, ddq, tau)
-  
-  print("Tau: \n", np.round(tau, 3))
-  
-  print("Método 1: \n", np.round((M.dot(ddq) + c + g), 3))
-  
-  print("Método 2:\n", np.round((M2.dot(ddq) + b2), 3))
-  

@@ -17,7 +17,6 @@ if __name__ == '__main__':
   bmarker_actual  = BallMarker(color['RED'])
   bmarker_deseado = BallMarker(color['GREEN'])
   # Archivos donde se almacenara los datos
-  # Expandir las rutas usando os.path.expanduser()
   fqact = open("/tmp/qactual.txt", "w")
   fqdes = open("/tmp/qdeseado.txt", "w")
   fxact = open("/tmp/xactual.txt", "w")
@@ -42,12 +41,13 @@ if __name__ == '__main__':
  
   # Posicion resultante de la configuracion articular deseada
   xdes = fkine_elbry420(qdes)[0:3,3]
+  
   # Copiar la configuracion articular en el mensaje a ser publicado
   jstate.position = q
   pub.publish(jstate)
  
   # Modelo RBDL
-  modelo = rbdl.loadModel('/home/farid/project_ws/src/universal_robot/kuka_kr20_description/urdf/kr20.urdf')
+  modelo = rbdl.loadModel('/home/iturrisoga3112/project_ws/src/universal_robot/kuka_kr20_description/urdf/kr20.urdf')
   ndof = modelo.q_size     # Grados de libertad
  
   # Frecuencia del envio (en Hz)
@@ -59,10 +59,8 @@ if __name__ == '__main__':
   robot = Robot(q, dq, ndof, dt)
 
   # Se definen las ganancias del controlador, diagonales
-  #Kp = 2
-  Kp = 7*np.diag(np.array([50, 10, 300, 100, 200, 10, 1, 500]))
- 
-  #Kd = 2
+
+  Kp = 7*np.diag(np.array([50, 10, 300, 100, 200, 10, 1, 500])) 
   Kd = 25*np.diag(np.array([50, 10, 200, 50, 70, 10, 1, 20]))
  
   # Arrays numpy
@@ -71,7 +69,7 @@ if __name__ == '__main__':
   g     = np.zeros(ndof)          # Para la gravedad
   c     = np.zeros(ndof)          # Para el vector de Coriolis+centrifuga
   M     = np.zeros([ndof, ndof])  # Para la matriz de inercia
-  e     = np.eye(ndof)               # Vector identidad
+  e     = np.eye(ndof)            # Vector identidad
 
   rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
   i = 0
@@ -96,12 +94,12 @@ if __name__ == '__main__':
     fqdes.write(str(t)+' '+str(qdes[0])+' '+str(qdes[1])+' '+ str(qdes[2])+' '+ str(qdes[3])+' '+str(qdes[4])+' '+str(qdes[5])+' '+str(qdes[6])+' '+str(qdes[7])+'\n ')
 
     # ----------------------------
-    # Control dinamico (COMPLETAR)
+    # Control dinamico 
     # ----------------------------
 
     rbdl.InverseDynamics(modelo, q, zeros, zeros, g)
     #g = np.zeros(ndof)
-    u = g + Kp.dot(np.subtract(qdes, q)) - Kd.dot(dq)  # Reemplazar por la ley de control
+    u = g + Kp.dot(np.subtract(qdes, q)) - Kd.dot(dq)  # Ley de control
     print(u)
    
     # Simulacion del robot
@@ -123,14 +121,14 @@ if __name__ == '__main__':
   fxdes.close()
 
 #--------------------------------------------------------------------------------------------------  
-  # Read data from log files
+  # Leer data
   qcurrent_data = np.loadtxt("/tmp/qactual.txt")
   qdesired_data = np.loadtxt("/tmp/qdeseado.txt")
-  # Generate time vector assuming constant time step
+  # Generar vector de tiempo
   num_samples = qcurrent_data.shape[0]
   time = np.linspace(0, num_samples / freq, num_samples)
 
-  # Plot position as function of time
+  # Plotear 
   plt.figure(figsize=(10, 8))
 
   plt.subplot(3, 3, 1)
@@ -198,16 +196,15 @@ if __name__ == '__main__':
   plt.title('q8 vs t')
 
   plt.tight_layout()
-  #plt.show()
 #----------------------------------------------------------------------------------------
-  # Read data from log files
+  # Leer data
   xcurrent_data = np.loadtxt("/tmp/xactual.txt")
   xdesired_data = np.loadtxt("/tmp/xdeseado.txt")
-  # Generate time vector assuming constant time step
+  # Generar vector de tiempo
   num_samples = xcurrent_data.shape[0]
   time = np.linspace(0, num_samples / freq, num_samples)
 
-  # Plot position as function of time
+  # Plotear
   plt.figure(figsize=(10, 8))
 
   plt.subplot(3, 1, 1)
@@ -233,17 +230,3 @@ if __name__ == '__main__':
 
   plt.tight_layout()
   plt.show()
-'''
- # Plot position in Cartesian space
-  fig = plt.figure()
-  ax = fig.gca(projection='3d')
-  ax.plot(xcurrent_data[:, 0], xcurrent_data[:, 1], xcurrent_data[:, 2], label='End Effector Path')
-  # Plot a single dot at the last position in xcurrent_data
-  ax.scatter(xcurrent_data[-1, 0], xcurrent_data[-1, 1], xcurrent_data[-1, 2], color='red', s=100,  label='End Position')
-  ax.scatter(xcurrent_data[0, 0], xcurrent_data[0, 1], xcurrent_data[0, 2], color='green', s=100,  label='Start Position')
-  ax.set_xlabel('X [m]')
-  ax.set_ylabel('Y [m]')
-  ax.set_zlabel('Z [m]')
-  ax.legend()
-  plt.show()
-  '''

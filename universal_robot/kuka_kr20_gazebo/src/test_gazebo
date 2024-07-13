@@ -25,19 +25,20 @@ if __name__ == '__main__':
     g.trajectory.joint_names = joint_names
 
 
-    # Initial position
+    # Posicion inicial ajustada a las restricciones de las articulaciones
     Q0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     g.trajectory.points = [ JointTrajectoryPoint(positions=Q0, velocities=[0]*8,time_from_start=rospy.Duration(2.0))]
     robot_client.send_goal(g)
     robot_client.wait_for_result()
     rospy.sleep(1)
 
-
+    # Empieza secuencia de movimientos 
     Q0 = [0.0, -0.190, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]
     g.trajectory.points = [ JointTrajectoryPoint(positions=Q0, velocities=[0]*8,time_from_start=rospy.Duration(2.0))]
     robot_client.send_goal(g)
     robot_client.wait_for_result()
     rospy.sleep(0.5)
+
 
     Q0 = [0.0, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     g.trajectory.points = [ JointTrajectoryPoint(positions=Q0, velocities=[0]*8,time_from_start=rospy.Duration(2.0))]
@@ -76,4 +77,3 @@ if __name__ == '__main__':
     rospy.sleep(0.5)
 
     robot_client.cancel_goal()
-

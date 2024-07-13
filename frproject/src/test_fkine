@@ -12,33 +12,33 @@ if __name__ == '__main__':
     pub = rospy.Publisher('joint_states', JointState, queue_size=10)
     bmarker = BallMarker(color['GREEN'])
 
-    # Joint names
+    # Nombres de las articulaciones
     jnames = ['q1','q2','q3','q4','q5','q6','q7','q8',]
-    # Joint Configuration
+    # Configuracion articular 
     q = np.array([0, 0, 0, 0, 0, 0, 0, 0])
 
-    # End effector with respect to the base
+    # Posicion del efector final con respecto a la base
     T = fkine_elbry420(q)
     print( np.round(T, 3) )
     bmarker.position(T)
 
-    # Object (message) whose type is JointState
+    # Lee el mensaje del tipo JointState
     jstate = JointState()
-    # Set values to the message
+    # Valores del mensaje
     jstate.header.stamp = rospy.Time.now()
     jstate.name = jnames
-    # Add the head joint value (with value 0) to the joints
+    # Le da los valores a la configuracion articular
     jstate.position = q
 
-    # Loop rate (in Hz)
+    # Frecuencia del loop (in Hz)
     rate = rospy.Rate(100)
-    # Continuous execution loop
+    # Ejecucion continua del loop
     while not rospy.is_shutdown():
-        # Current time (needed for ROS)
+        # Tiempo actual (necesario para ROS)
         jstate.header.stamp = rospy.Time.now()
-        # Publish the message
+        # Publica el mensaje
         pub.publish(jstate)
         bmarker.publish()
-        # Wait for the next iteration
+        # Espera a la siguiente iteracion
         rate.sleep()
 
